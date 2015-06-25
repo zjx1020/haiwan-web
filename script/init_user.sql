@@ -1,0 +1,13 @@
+use fdc;
+set names utf8;
+insert into user(account,name,password,sex,phone,email,birth,join_date,is_vip) values('haiwan','海湾','haiwan',0,'*','*','2008-03-08','2008-03-08',1);
+insert into user(account,name,password,sex,phone,email,birth,join_date,is_vip) values('1','云中','1',0,'*','*','2008-03-08','2008-03-08',1);
+insert into user(account,name,password,sex,phone,email,birth,join_date,is_vip) values('2','米姐','2',1,'*','*','2008-03-08','2008-03-08',1);
+insert into user(account,name,password,sex,phone,email,birth,join_date,is_vip) values('3','小洁','3',0,'*','*','2008-03-08','2008-03-08',1);
+insert into user(account,name,password,sex,phone,email,birth,join_date,is_vip) values('4','taro','4',1,'*','*','2008-03-08','2008-03-08',1);
+insert into user(account,name,password,sex,phone,email,birth,join_date,is_vip) values('5','鸡哥','5',0,'*','*','2008-03-08','2008-03-08',1);
+insert into user(account,name,password,sex,phone,email,birth,join_date,is_vip) values('6','33','6',1,'*','*','2008-03-08','2008-03-08',1);
+insert into user(account,name,password,sex,phone,email,birth,join_date,is_vip) values('7','44','7',0,'*','*','2008-03-08','2008-03-08',1);
+insert into user(account,name,password,sex,phone,email,birth,join_date,is_vip) values('8','花姐','8',1,'*','*','2008-03-08','2008-03-08',1);
+insert into user(account,name,password,sex,phone,email,birth,join_date,is_vip) values('9','ian','9',0,'*','*','2008-03-08','2008-03-08',0);
+insert into user(account,name,password,sex,phone,email,birth,join_date,is_vip) values('10','王磊','10',1,'*','*','2008-03-08','2008-03-08',0);

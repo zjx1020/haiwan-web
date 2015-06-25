@@ -1,0 +1,71 @@
+create database if not exists fdc default charset utf8 COLLATE utf8_general_ci;
+use fdc;
+create table if not exists user (
+    account varchar(30) not null,
+    name varchar(30) not null,
+    password varchar(20) not null,
+    sex tinyint not null,
+    phone varchar(20) not null,
+    email varchar(128) not null,
+    birth date not null,
+    join_date date not null,
+    is_vip tinyint not null,
+    primary key(account)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table if not exists dance (
+    name varchar(128) not null,
+    country varchar(128) not null,
+    kind tinyint not null,
+    dance_level tinyint not null,
+    description text not null,
+    dance_count int not null,
+    primary key(name)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table if not exists activity (
+    id int not null auto_increment,
+    time date not null,
+    name varchar(128) not null,
+    address varchar(1024) not null,
+    cost int not null,
+    income int not null,
+    description text not null,
+    primary key(id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table if not exists activity_record (
+    id bigint not null auto_increment,
+    account varchar(30) not null,
+    activity_id int not null,
+    is_dinner tinyint not null,
+    pay int not null,
+    primary key(id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table if not exists pay_record (
+    id bigint not null auto_increment,
+    account varchar(30) not null,
+    time datetime not null,
+    money int not null,
+    owner varchar(30) not null,
+    description text not null,
+    primary key(id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table if not exists dance_record (
+    id bigint not null auto_increment,
+    dance_name varchar(128) not null,
+    activity_id int not null,
+    kind tinyint not null,
+    teacher varchar(128) not null,
+    primary key(id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table if not exists dance_leader (
+    id bigint not null auto_increment,
+    dance_name varchar(128) not null,
+    account varchar(30) not null,
+    time datetime not null,
+    primary key(id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
