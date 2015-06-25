@@ -1,0 +1,22 @@
+{
+    "name": "diselop/yii2-ztree",
+    "description": "The zTree extension for the Yii framework",
+    "homepage": "https://github.com/diselop/yii2-ztree",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension","tree","ztree"],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Tony Krutins",
+            "email": "diselop@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "diselop\\ztree\\": ""
+        }
+    }
+}
