@@ -14,32 +14,33 @@ $this->registerJsFile(Url::base() . '/js/dance_ztree.js', ['depends'=>['diselop\
     <ul id="danceTree" class="ztree"></ul>
     </div>
     <div class="col-lg-9">
-        <h1 class="danceTitle">舞码大全</h1>
+        <h1 class="danceTitle" style="text-align:center">舞码大全</h1>
         <p class="danceDescription" style="display:none"></p>
-        <table class="danceTable table table-striped table-bordered detail-view" style="display:none">
+        <table class="danceTable" style="display:none">
             <tr>
-                <th class="col-lg-3">活动时间</th>
-                <td class="time col-lg-6"></td>
+                <td class="col-lg-1"></td>
+                <th class="col-lg-2">难度等级：</th>
+                <td class="dance_level"></td>
             </tr>
             <tr>
-                <th class="col-lg-3">活动主题</th>
-                <td class="name col-lg-6"></td>
+                <td class="col-lg-1"></td>
+                <th class="col-lg-2">舞蹈简介：</th>
+                <td class="description"></td>
             </tr>
             <tr>
-                <th class="col-lg-3">活动地址</th>
-                <td class="address col-lg-6"></td>
+                <td class="col-lg-1"></td>
+                <th class="col-lg-2">联欢次数：</th>
+                <td class="dance_count"></td>
             </tr>
             <tr>
-                <th class="col-lg-3">活动简介</th>
-                <td class="description col-lg-6"></td>
+                <td class="col-lg-1"></td>
+                <th class="col-lg-2">领舞者：</th>
+                <td class="leaders"></td>
             </tr>
             <tr>
-                <th class="col-lg-3">活动人员</th>
-                <td class="user col-lg-6"></td>
-            </tr>
-            <tr>
-                <th class="col-lg-3">活动舞码</th>
-                <td class="dance col-lg-6"></td>
+                <td class="col-lg-1"></td>
+                <th class="col-lg-2">教学记录：</th>
+                <td class="teachRecords"></td>
             </tr>
         </table>
     </div>

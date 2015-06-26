@@ -1,15 +1,13 @@
 function onClick(event, treeId, treeNode) {
   if (treeNode.isDance != null) {
-  /*
     $(".danceTitle").text(treeNode.name);
     $(".danceDescription").hide();
-    $.get(BASEURL + 'dance/display-dance&name=' + treeNode.name, function(data) {
+    $.get(BASEURL + 'dance/display-dance&name=' + treeNode.name.replace("*", ""), function(data) {
         $.each(data, function(key, val){
           $(".danceTable td." + key).text(val);
           $(".danceTable").show();
         });
     }, 'json');
-    */
   } else {
     if (treeNode.level == 0) {
       $(".danceTitle").text(treeNode.name).text("舞码大全");
@@ -46,4 +44,5 @@ $.get(BASEURL + 'dance/generate-dance-tree', function(data) {
 
 $.get(BASEURL + 'dance/display-all-dance', function(data) {
   $(".danceDescription").html(data.content).show();
+  $(".danceTable").hide();
 }, 'json');

@@ -5,19 +5,20 @@ namespace app\controllers;
 //use Yii;
 use yii\web\Controller;
 use app\models\Dance;
+use app\models\User;
 
 class DanceController extends Controller
 {
     public function actionGenerateDanceTree()
     {
-        $dances = Dance::find()->select(['country', 'name'])->orderBy('country')->all();
+        $dances = Dance::find()->select(['country', 'name', 'kind'])->orderBy('country')->all();
         $dancesArr = array();
         foreach ($dances as $dance) {
             $country = $dance->country;
             if (!array_key_exists($country, $dancesArr)) {
                 $dancesArr[$country] = array();
             }
-            $dancesArr[$country][] = $dance->name;
+            $dancesArr[$country][] = $dance->name . ($dance->kind == 1 ? "*" : "");
         }
 
         $childNodes = array();
@@ -34,12 +35,21 @@ class DanceController extends Controller
     }
 
     public function actionDisplayDance() {
-    /*
         $params = $_REQUEST;
-        $id = (integer)$params["id"];
-        $dance = Dance::find()->select(['time', 'name', 'address', 'description'])->where("id=$id")->asArray()->One();
+        $name = $params["name"];
+        $dance = Dance::find()->select(['dance_level', 'description', 'dance_count'])->where("name=\"$name\"")->asArray()->One();
+        $dance['dance_level'] = self::$DANCE_LEVEL[$dance['dance_level']];
+        $danceLeaders = User::findBySql("select name from user where account in (select account from dance_leader where dance_name=\"$name\")")->all();
+        if (count($danceLeaders) == 0) {
+            $dance["leaders"] = "海湾竟然没人会跳这首舞。。。";
+        } else {
+            $leaders = array();
+            foreach ($danceLeaders as $danceLeader) {
+                $leaders[] = $danceLeader->name;
+            }
+            $dance["leaders"] = implode(",", $leaders);
+        }
         return json_encode($dance);
-        */
     }
 
     public function actionDisplayAllDance() {
@@ -57,4 +67,12 @@ class DanceController extends Controller
         $result = $country . "土风舞有" . $count . "首。";
         return json_encode(array('content' => $result));
     }
+    
+    private static $DANCE_LEVEL = array(
+        1 => '简单',
+        2 => '入门',
+        3 => '熟练',
+        4 => '进阶',
+        5 => '高阶',
+    );
 }
