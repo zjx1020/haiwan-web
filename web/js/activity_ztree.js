@@ -29,38 +29,46 @@ function onClick(event, treeId, treeNode) {
           $("#teachDanceTable").hide();
         }
 
-        table = document.getElementById("reviewDanceTable");
-        clearTable(table, 0);
-        var i = 0;
-        var r;
-        $.each(data.reviewDances, function(index, val){
-          if (i == 0) {
-            r = table.insertRow();
-          }
-          var cellName = r.insertCell(i * 2);
-          cellName.className = "col-lg-1";
-          cellName = r.insertCell(i * 2 + 1);
-          cellName.innerHTML = val;
-          cellName.className = "col-lg-2";
-          i = (i + 1) % 4;
-        });
-        $("#reviewDanceTable").show();
+        if (data.reviewDances != null && data.reviewDances.length > 0) {
+          table = document.getElementById("reviewDanceTable");
+          clearTable(table, 0);
+          var i = 0;
+          var r;
+          $.each(data.reviewDances, function(index, val){
+              if (i == 0) {
+              r = table.insertRow();
+              }
+              var cellName = r.insertCell(i * 2);
+              cellName.className = "col-lg-1";
+              cellName = r.insertCell(i * 2 + 1);
+              cellName.innerHTML = val;
+              cellName.className = "col-lg-2";
+              i = (i + 1) % 4;
+              });
+          $("#reviewDanceTable").show();
+        } else {
+          $("#reviewDanceTable").hide();
+        }
 
-        table = document.getElementById("activityDanceTable");
-        clearTable(table, 0);
-        i = 0;
-        $.each(data.activityDances, function(index, val){
-          if (i == 0) {
-            r = table.insertRow();
-          }
-          var cellName = r.insertCell(i * 2);
-          cellName.className = "col-lg-1";
-          cellName = r.insertCell(i * 2 + 1);
-          cellName.innerHTML = val;
-          cellName.className = "col-lg-2";
-          i = (i + 1) % 4;
-        });
-        $("#activityDanceTable").show();
+        if (data.activityDances != null && data.activityDances.length > 0) {
+          table = document.getElementById("activityDanceTable");
+          clearTable(table, 0);
+          i = 0;
+          $.each(data.activityDances, function(index, val){
+              if (i == 0) {
+              r = table.insertRow();
+              }
+              var cellName = r.insertCell(i * 2);
+              cellName.className = "col-lg-1";
+              cellName = r.insertCell(i * 2 + 1);
+              cellName.innerHTML = val;
+              cellName.className = "col-lg-2";
+              i = (i + 1) % 4;
+              });
+          $("#activityDanceTable").show();
+        } else {
+          $("#activityDanceTable").hide();
+        }
     }, 'json');
   } else {
     if (treeNode.level == 0) {
@@ -69,12 +77,18 @@ function onClick(event, treeId, treeNode) {
           $(".activityDescription").html(data.content).show();
       }, 'json');
       $(".activityTable").hide();
+      $("#teachDanceTable").hide();
+      $("#reviewDanceTable").hide();
+      $("#activityDanceTable").hide();
     } else {
       $(".activityTitle").text(treeNode.name);
       $.get(BASEURL + 'activity/display-year-activity&year=' + treeNode.name.substr(0, 4), function(data) {
           $(".activityDescription").html(data.content).show();
       }, 'json');
       $(".activityTable").hide();
+      $("#teachDanceTable").hide();
+      $("#reviewDanceTable").hide();
+      $("#activityDanceTable").hide();
     }
   }
 }
@@ -108,4 +122,7 @@ $.get(BASEURL + 'activity/generate-activity-tree', function(data) {
 $.get(BASEURL + 'activity/display-all-activity', function(data) {
   $(".activityDescription").html(data.content).show();
   $(".activityTable").hide();
+  $("#teachDanceTable").hide();
+  $("#reviewDanceTable").hide();
+  $("#activityDanceTable").hide();
 }, 'json');
