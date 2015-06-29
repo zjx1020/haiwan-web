@@ -2,9 +2,10 @@
 
 namespace app\controllers;
 
-//use Yii;
+use Yii;
 use yii\web\Controller;
 use app\models\Dance;
+use app\models\DanceLeader;
 use app\models\User;
 
 class DanceController extends Controller
@@ -40,14 +41,23 @@ class DanceController extends Controller
         $dance = Dance::find()->select(['dance_level', 'description', 'dance_count'])->where("name=\"$name\"")->asArray()->One();
         $dance['dance_level'] = self::$DANCE_LEVEL[$dance['dance_level']];
         $danceLeaders = User::findBySql("select name from user where account in (select account from dance_leader where dance_name=\"$name\")")->all();
-        if (count($danceLeaders) == 0) {
+        $leaderCnt = count($danceLeaders);
+        if ($leaderCnt == 0) {
             $dance["leaders"] = "海湾竟然没人会跳这首舞。。。";
         } else {
             $leaders = array();
             foreach ($danceLeaders as $danceLeader) {
                 $leaders[] = $danceLeader->name;
             }
-            $dance["leaders"] = implode(",", $leaders);
+            $dance["leaders"] = implode("，", $leaders);
+        }
+        $dance['isGuest'] = Yii::$app->user->isGuest ? true : false;
+        if (!$dance['isGuest']) {
+            if ($leaderCnt != 0 && strpos($dance["leaders"], Yii::$app->user->identity->name) !== false) {
+                $dance['isLeader'] = true;
+            } else {
+                $dance['isLeader'] = false;
+            }
         }
         return json_encode($dance);
     }
@@ -66,6 +76,21 @@ class DanceController extends Controller
         $count = Dance::find()->where("country=\"$country\"")->count();
         $result = $country . "土风舞有" . $count . "首。";
         return json_encode(array('content' => $result));
+    }
+
+    public function actionAddDanceLeader() {
+        $params = $_REQUEST;
+        $danceLeader = new DanceLeader;
+        $danceLeader->dance_name = $params["name"];
+        $danceLeader->account = Yii::$app->user->identity->account;
+        $danceLeader->time = date("Y-m-d H:i:s", time());
+        $result = array();
+        if ($danceLeader->insert()) {
+            $result['msg'] = "恭喜成为\"" . $params["name"] . "\"领舞者，请每次活动前认真复习并积极领舞，领舞不合格者将被取消领舞资格！";
+        } else {
+            $result['msg'] = "系统异常，请联系管理员！";
+        }
+        return json_encode($result);
     }
     
     private static $DANCE_LEVEL = array(
