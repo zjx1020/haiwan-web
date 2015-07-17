@@ -31,6 +31,8 @@ create table if not exists activity (
     cost int not null,
     income int not null,
     description text not null,
+    kind tinyint not null,
+    creator varchar(30) not null,
     primary key(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -38,7 +40,6 @@ create table if not exists activity_record (
     id bigint not null auto_increment,
     account varchar(30) not null,
     activity_id int not null,
-    is_dinner tinyint not null,
     pay int not null,
     primary key(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;

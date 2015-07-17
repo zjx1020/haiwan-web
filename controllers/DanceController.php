@@ -4,9 +4,14 @@ namespace app\controllers;
 
 use Yii;
 use yii\web\Controller;
+use yii\db\Query;
 use app\models\Dance;
+use app\models\DanceRecord;
 use app\models\DanceLeader;
 use app\models\User;
+use yii\web\UploadedFile;
+
+require_once dirname(__FILE__) . '/../vendor/PHPExcel-1.8/Classes/PHPExcel.php'; 
 
 class DanceController extends Controller
 {
@@ -92,7 +97,74 @@ class DanceController extends Controller
         }
         return json_encode($result);
     }
-    
+
+    public function actionDisplayTeachRecord() {
+        $params = $_REQUEST;
+        $name = $params['name'];
+        $query = new Query;
+        $rows = $query->select(['activity.time', 'dance_record.teacher'])->from(['dance_record', 'activity'])->where("dance_record.activity_id=activity.id and dance_record.kind=2 and dance_name=\"$name\"")->orderBy('activity.time')->all();
+
+        return json_encode($rows);
+    }
+
+    public function actionAddDances() {
+        $filePath = $_REQUEST['filePath'];
+        if (!isset($filePath)) {
+            return;
+        }
+        $PHPExcel = new PHPExcel(); 
+
+        //默认用excel2007读取excel，若格式不对，则用之前的版本进行读取
+        $PHPReader = new PHPExcel_Reader_Excel2007(); 
+        if(!$PHPReader->canRead($filePath)){ 
+            $PHPReader = new PHPExcel_Reader_Excel5(); 
+            if(!$PHPReader->canRead($filePath)){ 
+                echo 'no Excel'; 
+                return ; 
+            }
+        }
+
+        $PHPExcel = $PHPReader->load($filePath); 
+        //读取excel文件中的第一个工作表
+        $currentSheet = $PHPExcel->getSheet(0); 
+        /**取得最大的列号*/ 
+        $allColumn = $currentSheet->getHighestColumn(); 
+        if ($allColumn != 'E') {
+            return;
+        }
+        //取得一共有多少行
+        $allRow = $currentSheet->getHighestRow(); 
+        /*
+        for($currentColumn= 'A';$currentColumn <= $allColumn; $currentColumn++){ 
+            $val = $currentSheet->getCellByColumnAndRow(ord($currentColumn) - 65,1)->getValue();
+            echo $val . "\n";
+        }
+        */
+        //从第二行开始输出，因为excel表中第一行为列名
+        $dance = new Dance();
+        $msg = "";
+        for($currentRow = 2;$currentRow <= $allRow;$currentRow++){ 
+            $arr = array();
+            for($currentColumn= 'A';$currentColumn<= $allColumn; $currentColumn++){ 
+                $val = $currentSheet->getCellByColumnAndRow(ord($currentColumn) - 65,$currentRow)->getValue();//ord()将字符转为十进制数
+                $arr[$currentColumn] = $val;
+                //如果输出汉字有乱码，则需将输出内容用iconv函数进行编码转换，如下将gb2312编码转为utf-8编码输出 
+                //echo iconv('utf-8','gb2312', $val)."\t"; 
+            }
+            $dance->name = $arr['A'];
+            $dance->country = $arr['B'];
+            $dance->kind = $arr['C'];
+            $dance->dance_level = $arr['D'];
+            $dance->description = $arr['E'];
+            $dance->dance_count = 0;
+            if (!$dance->insert()) {
+                $msg .= $arr['A'] . ",";
+            }
+        }
+        return json_encode(array('msg' => $msg));
+    }
+
+
     private static $DANCE_LEVEL = array(
         1 => '简单',
         2 => '入门',

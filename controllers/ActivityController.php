@@ -8,12 +8,13 @@ use app\models\Activity;
 use app\models\User;
 use app\models\Dance;
 use app\models\DanceRecord;
+use yii\log\Logger;
 
 class ActivityController extends Controller
 {
     public function actionGenerateActivityTree()
     {
-        $activities = Activity::find()->select(['id', 'time', 'name'])->orderBy(['time' => SORT_DESC])->all();
+        $activities = Activity::find()->select(['id', 'time', 'name'])->where("kind=1")->orderBy(['time' => SORT_DESC])->all();
         $activitiesArr = array();
         foreach ($activities as $activity) {
             $year = substr($activity->time, 0, 4);
@@ -88,15 +89,15 @@ class ActivityController extends Controller
     }
 
     public function actionDisplayAllActivity() {
-        $minTime = Activity::find()->min('time');
-        $totalCount = Activity::find()->count();
+        $minTime = Activity::find()->where("kind=1")->min('time');
+        $totalCount = Activity::find()->where("kind=1")->count();
         $days = floor((time() - strtotime($minTime)) / 86400);
         $result = "海湾从" . $minTime . "开始已举办" . $totalCount . "次活动，横跨" . $days . "天。" . "<br>";
         $yearCount = array();
         $currentYear = date("Y", time());
         $minYear = substr($minTime, 0, 4);
         for ($i = $minYear; $i <= $currentYear; ++$i) {
-            $yearCount[$i] = Activity::find()->where("time like \"$i%\"")->count();
+            $yearCount[$i] = Activity::find()->where("kind=1 and time like \"$i%\"")->count();
         }
         $result .= "其中：" . "<br>";
         foreach ($yearCount as $year => $count) {
@@ -108,8 +109,61 @@ class ActivityController extends Controller
     public function actionDisplayYearActivity() {
         $params = $_REQUEST;
         $year = $params["year"];
-        $count = Activity::find()->where("time like \"$year%\"")->count();
+        $count = Activity::find()->where("kind=1 and time like \"$year%\"")->count();
         $result = "本年度海湾活动" . $count . "次。";
         return json_encode(array('content' => $result));
+    }
+
+    public function checkAuth() {
+        $id = (integer) $_REQUEST['id'];
+        $result = array();
+        $result['canJoin'] = canJoin();
+        $result['hasAuth'] = hasAuth($id);
+        return json_encode($result);
+    }
+
+    private function canJoin() {
+        if (Yii::$app->user->isGuest || ActivityRecord::find()->where("account=\"" . Yii::$app->user->identity->account . "\"")->one() != null) {
+            return false;
+        }
+        return true;
+    }
+
+    private function hasAuth($id) {
+        $activity = Activity::findOne($id);
+        if (Yii::$app->user->identity->name == $activity->creator || Yii::$app->user->identity->account == 'haiwan') {
+            return true;
+        }
+        return false;
+    }
+
+    public function actionJoin() {
+        $id = (integer) $_REQUEST['id'];
+        if (canJoin() === false) {
+            return json_encode(array('succ' => false, 'msg' => '无法报名'));
+        }
+        $activityRecord = new ActivityRecord();
+        $activityRecord->account = Yii::$app->user->identity->account;
+        $activityRecord->activity_id = $id;
+        $activityRecord->pay = 30;
+        try {
+            $result = $activityRecord->insert();
+            if ($result === false) {
+                Yii::error("insert to db activityRecord failed");
+                return json_encode(array('succ' => false, 'msg' => '网站异常，报名失败，请联系管理员'));
+            }
+            return $this->redirect(['/site/new-activity']);
+        } catch (Exception $e) {
+            Yii::error("insert to db activityRecord exception:" . $e->getMessage());
+            return json_encode(array('succ' => false, 'msg' => '网站异常，报名失败，请联系管理员'));
+        }
+    }
+
+    public function actionCancel() {
+        $id = (integer) $_REQUEST['id'];
+    }
+
+    public function actionFinish() {
+        $id = (integer) $_REQUEST['id'];
     }
 }

@@ -42,8 +42,14 @@ AppAsset::register($this);
                 'options' => ['class' => 'navbar-nav navbar-right'],
                 'items' => [
                     ['label' => '首页', 'url' => ['/site/index']],
-                    ['label' => '活动', 'url' => ['/site/activity']],
+                    ['label' => '活动', 'items' => [
+                            ['label' => '最新活动', 'url' => ['/site/new-activity']],
+                            ['label' => '历史活动', 'url' => ['/site/activity']],
+                            ['label' => '创建活动', 'url' => ['/site/create-activity']],
+                        ]
+                    ],
                     ['label' => '舞码大全', 'url' => ['/site/dances']],
+                    //['label' => '舞码大全', 'url' => ['/site/test']],
                     Yii::$app->user->isGuest ?
                         ['label' => '登录', 'url' => ['/site/login']] :
                         [
