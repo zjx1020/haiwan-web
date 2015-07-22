@@ -70,3 +70,8 @@ create table if not exists dance_leader (
     time datetime not null,
     primary key(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table if not exists country (
+    name varchar(128) not null,
+    primary key(name)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;

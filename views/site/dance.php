@@ -15,7 +15,7 @@ $this->registerJsFile(Url::base() . '/js/dance_ztree.js', ['depends'=>['diselop\
 ?>
 <div class="dance">
     <div class="col-lg-3">
-        <ul id="danceTree" class="ztree"></ul>
+        <ul id="danceTree" class="ztree" style="overflow:auto;height:500px"></ul>
         <div class="btn-group btn-group-xs">
         <!--button type="button" class="btn btn-primary addDance">新增一条舞码</button-->
         <!--button type="button" class="btn btn-primary addDances">新增多条舞码</button-->

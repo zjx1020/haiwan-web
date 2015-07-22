@@ -12,7 +12,7 @@ $this->registerJsFile(Url::base() . '/js/activity_ztree.js', ['depends'=>['disel
 <div class="activity">
     <div class="col-lg-3">
     <!--?= \diselop\ztree\Ztree::widget($ztree); ?-->
-    <ul id="activityTree" class="ztree"></ul>
+    <ul id="activityTree" class="ztree" style="overflow:auto;height:500px"></ul>
     </div>
     <div class="col-lg-9">
         <h1 class="activityTitle" style="text-align:center">海湾活动大全</h1>

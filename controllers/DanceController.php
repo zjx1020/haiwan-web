@@ -9,10 +9,10 @@ use app\models\Dance;
 use app\models\DanceRecord;
 use app\models\DanceLeader;
 use app\models\User;
+use app\models\Country;
 use yii\web\UploadedFile;
 
-use vendor\phpoffice\phpexcel\Classes\PHPExcel;
-#require_once (dirname(__FILE__) . '/../vendor/PHPExcel/Classes/PHPExcel.php'); 
+require_once (dirname(__FILE__) . '/../vendor/phpoffice/phpexcel/Classes/PHPExcel.php'); 
 
 class DanceController extends Controller
 {
@@ -113,12 +113,13 @@ class DanceController extends Controller
         if (!isset($filePath)) {
             return;
         }
-        $PHPExcel = new PHPExcel(); 
+        $filePath = dirname(__FILE__) . "/../" . $filePath;
+        $PHPExcel = new \PHPExcel(); 
 
         //默认用excel2007读取excel，若格式不对，则用之前的版本进行读取
-        $PHPReader = new PHPExcel_Reader_Excel2007(); 
+        $PHPReader = new \PHPExcel_Reader_Excel2007(); 
         if(!$PHPReader->canRead($filePath)){ 
-            $PHPReader = new PHPExcel_Reader_Excel5(); 
+            $PHPReader = new \PHPExcel_Reader_Excel5(); 
             if(!$PHPReader->canRead($filePath)){ 
                 echo 'no Excel'; 
                 return ; 
@@ -142,29 +143,41 @@ class DanceController extends Controller
         }
         */
         //从第二行开始输出，因为excel表中第一行为列名
-        $dance = new Dance();
         $msg = "";
+        $countryArr = Country::find()->all();
+        $countries = array();
+        foreach ($countryArr as $country) {
+            $countries[] = $country->name;
+        }
         for($currentRow = 2;$currentRow <= $allRow;$currentRow++){ 
+            $dance = new Dance();
             $arr = array();
             for($currentColumn= 'A';$currentColumn<= $allColumn; $currentColumn++){ 
                 $val = $currentSheet->getCellByColumnAndRow(ord($currentColumn) - 65,$currentRow)->getValue();//ord()将字符转为十进制数
+                $val = $val == null ? "" : $val;
                 if ($currentColumn == 'C' || $currentColumn == 'D') {
-                    if ($val == '' || $val == null) {
-                        $val = 1;
-                    }
+                    $val = $val == "" ? 1 : (integer) $val;
                 }
                 $arr[$currentColumn] = $val;
                 //如果输出汉字有乱码，则需将输出内容用iconv函数进行编码转换，如下将gb2312编码转为utf-8编码输出 
                 //echo iconv('utf-8','gb2312', $val)."\t"; 
             }
             $dance->name = $arr['A'];
-            $dance->country = $arr['B'];
+            $dance->country = in_array($arr['B'], $countries) ? $arr['B'] : '未知';
             $dance->kind = $arr['C'];
             $dance->dance_level = $arr['D'];
-            $dance->description = $arr['E'];
+            if (!in_array($arr['B'], $countries)) {
+                $dance->description = "出自：" . $arr['B'] . "。" . $arr['E'];
+            } else {
+                $dance->description = $arr['E'];
+            }
             $dance->dance_count = 0;
-            if (!$dance->insert()) {
-                $msg .= $arr['A'] . ",";
+            try {
+                if (!$dance->insert()) {
+                    $msg .= $arr['A'] . ",";
+                }
+            } catch (yii\db\IntegrityException $e) {
+                $msg .= $arr['A'] . ":" . $e->getMessage() . ",";
             }
         }
         return json_encode(array('msg' => $msg));
