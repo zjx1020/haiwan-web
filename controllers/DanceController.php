@@ -11,7 +11,8 @@ use app\models\DanceLeader;
 use app\models\User;
 use yii\web\UploadedFile;
 
-require_once dirname(__FILE__) . '/../vendor/PHPExcel-1.8/Classes/PHPExcel.php'; 
+use vendor\phpoffice\phpexcel\Classes\PHPExcel;
+#require_once (dirname(__FILE__) . '/../vendor/PHPExcel/Classes/PHPExcel.php'); 
 
 class DanceController extends Controller
 {
@@ -24,7 +25,7 @@ class DanceController extends Controller
             if (!array_key_exists($country, $dancesArr)) {
                 $dancesArr[$country] = array();
             }
-            $dancesArr[$country][] = $dance->name . ($dance->kind == 1 ? "*" : "");
+            $dancesArr[$country][] = $dance->name . ($dance->kind == 2 ? "*" : "");
         }
 
         $childNodes = array();
@@ -147,6 +148,11 @@ class DanceController extends Controller
             $arr = array();
             for($currentColumn= 'A';$currentColumn<= $allColumn; $currentColumn++){ 
                 $val = $currentSheet->getCellByColumnAndRow(ord($currentColumn) - 65,$currentRow)->getValue();//ord()将字符转为十进制数
+                if ($currentColumn == 'C' || $currentColumn == 'D') {
+                    if ($val == '' || $val == null) {
+                        $val = 1;
+                    }
+                }
                 $arr[$currentColumn] = $val;
                 //如果输出汉字有乱码，则需将输出内容用iconv函数进行编码转换，如下将gb2312编码转为utf-8编码输出 
                 //echo iconv('utf-8','gb2312', $val)."\t"; 

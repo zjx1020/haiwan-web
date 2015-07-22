@@ -19,7 +19,8 @@
         "yiisoft/yii2-bootstrap": "*",
         "yiisoft/yii2-swiftmailer": "*",
         "yiisoft/yii2-jui": "*",
-        "diselop/yii2-ztree": "*@dev",
+        "phpoffice/phpexcel": "*",
+        "diselop/yii2-ztree": "*@dev"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
