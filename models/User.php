@@ -15,7 +15,7 @@ use Yii;
  * @property string $email
  * @property string $birth
  * @property string $join_date
- * @property integer $is_vip
+ * @property integer $left_count
  */
 class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 {
@@ -30,8 +30,8 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function rules()
     {
         return [
-            [['account', 'name', 'password', 'sex', 'phone', 'email', 'birth', 'join_date', 'is_vip'], 'required'],
-            [['sex', 'is_vip'], 'integer'],
+            [['account', 'name', 'password', 'sex', 'phone', 'email', 'birth', 'join_date', 'left_count'], 'required'],
+            [['sex', 'left_count'], 'integer'],
             [['birth', 'join_date'], 'safe'],
             [['account', 'name'], 'string', 'max' => 30],
             [['password', 'phone'], 'string', 'max' => 20],
@@ -50,7 +50,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'email' => 'Email',
             'birth' => 'Birth',
             'join_date' => 'Join Date',
-            'is_vip' => 'Is Vip',
+            'left_count' => 'Left Count',
         ];
     } 
 

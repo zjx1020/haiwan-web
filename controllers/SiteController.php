@@ -188,17 +188,15 @@ class SiteController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post())) {
-            if ($model->validate()) {
                 if ($model->createActivity()) {
                     return $this->redirect(['site/new-activity']);
                 }
-            }
         }
 
         return $this->render('createActivity', [
             'model' => $model,
             ]);
-    }
+    } 
 
     public function actionDances() {
         return $this->render('dance');

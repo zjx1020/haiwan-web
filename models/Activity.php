@@ -14,6 +14,8 @@ use Yii;
  * @property integer $cost
  * @property integer $income
  * @property string $description
+ * @property integer $kind
+ * @property string $creator
  */
 class Activity extends \yii\db\ActiveRecord
 {
@@ -31,12 +33,13 @@ class Activity extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['time', 'name', 'address', 'cost', 'income', 'description'], 'required'],
+            [['time', 'name', 'address', 'cost', 'income', 'kind', 'creator'], 'required'],
             [['time'], 'safe'],
-            [['cost', 'income'], 'integer'],
+            [['cost', 'income', 'kind'], 'integer'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 128],
-            [['address'], 'string', 'max' => 1024]
+            [['address'], 'string', 'max' => 1024],
+            [['creator'], 'string', 'max' => 30]
         ];
     }
 
@@ -53,6 +56,8 @@ class Activity extends \yii\db\ActiveRecord
             'cost' => 'Cost',
             'income' => 'Income',
             'description' => 'Description',
+            'kind' => 'Kind',
+            'creator' => 'Creator',
         ];
     }
 }

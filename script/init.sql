@@ -9,7 +9,7 @@ create table if not exists user (
     email varchar(128) not null,
     birth date not null,
     join_date date not null,
-    is_vip tinyint not null,
+    left_count tinyint not null,
     primary key(account)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -40,7 +40,7 @@ create table if not exists activity_record (
     id bigint not null auto_increment,
     account varchar(30) not null,
     activity_id int not null,
-    pay int not null,
+    time datetime not null,
     primary key(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

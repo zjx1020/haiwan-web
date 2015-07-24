@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
@@ -7,7 +8,7 @@ use yii\widgets\DetailView;
 $this->title = '上海海湾土风舞社-活动';
 $subtitle = '最新活动';
 $this->params['breadcrumbs'][] = $subtitle;
-$this->registerJsFile(Url::base() . '/js/activity.js', ['depends' => ['yii\web\JqueryAsset::className()']]);
+$this->registerJsFile(Url::base() . '/js/activity.js', ['depends' => ['yii\web\JqueryAsset']]);
 ?>
 <div class="newActivity">
     <p style="display:none" class="activityId"><?php echo $model['id']?></p>

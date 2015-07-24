@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = '个人资料';
             'birth',
             'join_date',
             'leader_dance_list:ntext',
-            'is_vip',
+            'left_count',
         ],
         'template' => "<tr><th class=\"col-lg-3\">{label}</th><td class=\"col-lg-9\">{value}</td></tr>",
     ]) ?>

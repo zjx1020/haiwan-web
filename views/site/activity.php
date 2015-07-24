@@ -33,11 +33,6 @@ $this->registerJsFile(Url::base() . '/js/activity_ztree.js', ['depends'=>['disel
                 <th class="col-lg-2">活动人员：</th>
                 <td class="users"></td>
             </tr>
-            <tr>
-                <td class="col-lg-1"></td>
-                <th class="col-lg-2">聚餐人员：</th>
-                <td class="dinnerUsers"></td>
-            </tr>
         </table>
         <table id="teachDanceTable" style="display:none;color:red" class="col-lg-12">
             <caption style="text-align:center;color:red">教学舞码</caption>

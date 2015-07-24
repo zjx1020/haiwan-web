@@ -5,6 +5,7 @@ namespace app\controllers;
 use Yii;
 use yii\web\Controller;
 use yii\db\Query;
+use app\models\Activity;
 use app\models\Dance;
 use app\models\DanceRecord;
 use app\models\DanceLeader;
@@ -181,6 +182,77 @@ class DanceController extends Controller
             }
         }
         return json_encode(array('msg' => $msg));
+    }
+
+    public function actionGenerateReviewDances() {
+        $num = (integer) $_REQUEST['num'];
+    }
+
+    /**
+     * 自动生成舞码逻辑：
+     * 1、单、双人舞各选一半
+     * 2、从舞码库里选出上一次没跳过且不在这次教舞、复习舞里的所有舞码
+     */
+    public function actionGenerateActivityDances() {
+        $num = (integer) $_REQUEST['num'];
+        $id = (integer) $_REQUEST['id'];
+        $coupleDanceNum = $num / 2;
+        $singleDanceNum = $num - $coupleDanceNum;
+        $lastActivity = Activity::find()->select(['id'])->where("kind=1")->orderBy('time DESC')->One();
+        if ($lastActivity === false) {
+            $filter = " and name not in (select dance_name from dance_record where activity_id=$id)";
+        } else {
+            $lastId = $lastActivity['id'];
+            $filter = " and name not in (select dance_name from dance_record where activity_id=$id or activity_id=$lastId)";
+        }
+
+        $sql = "select name from dance where kind=1";
+        $dances = Dance::findBySql($sql . $filter)->all();
+        if (count($dances) < $singleDanceNum) {
+            return json_encode(array('succ' => false, 'msg' => "舞码库舞码太少，无法排舞"));
+        }
+        $singleDances = array();
+        $i = 0;
+        foreach ($dances as $dance) {
+            $singleDances[$i++] = $dance->name;
+        }
+        
+        $sql = "select name from dance where kind=2";
+        $dances = Dance::findBySql($sql . $filter)->all();
+        if (count($dances) < $coupleDanceNum) {
+            return json_encode(array('succ' => false, 'msg' => "舞码库舞码太少，无法排舞"));
+        }
+        $coupleDances = array();
+        $i = 0;
+        foreach ($dances as $dance) {
+            $coupleDances[$i++] = $dance->name;
+        }
+
+        $file = fopen(dirname(__FILE__) . "/../web/uploads/result", "w");
+        $leftSingle = count($singleDances);
+        $leftCouple = count($coupleDances);
+        for ($i = 0; $i < $num; ++$i) {
+            if ($singleDanceNum == 0) {
+                $type = 2;
+            } elseif ($coupleDanceNum == 0) {
+                $type = 1;
+            } else {
+                $type = rand(1, 2);
+            }
+            if ($type == 1) {
+                $pos = rand(0, $leftSingle - 1);
+                $name = $singleDances[$pos];
+                $leftSingle -= 1;
+                $singleDances[$pos] = $singleDances[$leftSingle];
+            } else {
+                $pos = rand(0, $leftCouple - 1);
+                $name = $coupleDances[$pos] . "*";
+                $leftCouple -= 1;
+                $coupleDances[$pos] = $coupleDances[$leftCouple];
+            }
+            
+            fwrite($file, $name . "\n");
+        }
     }
 
 

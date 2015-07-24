@@ -10,8 +10,7 @@ use Yii;
  * @property integer $id
  * @property string $account
  * @property integer $activity_id
- * @property integer $is_dinner
- * @property integer $pay
+ * @property string $time
  */
 class ActivityRecord extends \yii\db\ActiveRecord
 {
@@ -29,8 +28,9 @@ class ActivityRecord extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['account', 'activity_id', 'is_dinner', 'pay'], 'required'],
-            [['activity_id', 'is_dinner', 'pay'], 'integer'],
+            [['account', 'activity_id', 'time'], 'required'],
+            [['activity_id'], 'integer'],
+            [['time'], 'safe'],
             [['account'], 'string', 'max' => 30]
         ];
     }
@@ -44,8 +44,7 @@ class ActivityRecord extends \yii\db\ActiveRecord
             'id' => 'ID',
             'account' => 'Account',
             'activity_id' => 'Activity ID',
-            'is_dinner' => 'Is Dinner',
-            'pay' => 'Pay',
+            'time' => 'Time',
         ];
     }
 }
