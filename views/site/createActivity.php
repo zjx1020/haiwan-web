@@ -7,41 +7,36 @@ use yii\widgets\ActiveForm;
 $this->title = '上海海湾土风舞社-活动';
 $subtitle = '创建活动';
 $this->params['breadcrumbs'][] = $subtitle;
-$baseUrl = yii\helpers\Url::base() . "/index.php?r="
 ?>
 <div class="createActivity">
-    <form class="form-horizontal" action="<?=$baseUrl?>activity/create-activity" method="post">
-    <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>">
-    <div class="form-group">
-        <label class="col-lg-1 control-label" for="activityform-time">活动时间</label>
-        <div class="col-lg-3">
-            <input type="text" id="activityform-time" class="form-control hasDatepicker" name="[time]" value=<?= $model->time?>>
-        </div>
-        <label class="col-lg-1 control-label" for="activityform-name">活动主题</label>
-        <div class="col-lg-3">
-            <input type="text" id="activityform-name" class="form-control" name="[name]" maxlength="32" value=<?= $model->name?>>
-        </div>
-        <label class="col-lg-1 control-label" for="activityform-cost">活动花费</label>
-        <div class="col-lg-3">
-            <input type="text" id="activityform-cost" class="form-control" name="[cost]" value=<?= $model->cost?>>
-        </div>
-    </div>
+    <?php $form = ActiveForm::begin([
+        'options' => ['class' => 'form-horizontal'],
+        'fieldConfig' => [
+            'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
+            'labelOptions' => ['class' => 'col-lg-1 control-label'],
+        ],
+    ]); ?>
+    <?= $form->field($model, 'time')->widget(\yii\jui\DatePicker::className(), [
+        'options' => [
+        'class' => 'form-control',
+        ],
+        'clientOptions' => [
+        'changeYear' => true,
+        'changeMonth' => true,
+        'minDate' => '+1',
+        ],
+        'language' => 'zh-CN',
+        'dateFormat' => 'yyyy-MM-dd',
+        ])?>
+    <?= $form->field($model, 'name')->textInput(['maxlength' => 32]) ?>
+    <?= $form->field($model, 'address')->textInput(['maxlength' => 256]) ?>
+    <?= $form->field($model, 'cost') ?>
+    <?= $form->field($model, 'description') ?> 
 
-    <div class="form-group field-activityform-address required">
-        <label class="col-lg-1 control-label" for="activityform-address">活动地址</label>
-        <div class="col-lg-11">
-            <input type="text" id="activityform-address" class="form-control" name="[address]" maxlength="256" value=<?= $model->address?>>
-        </div>
-    </div>
-
-    <div class="form-group field-activityform-description">
-        <label class="col-lg-1 control-label" for="activityform-description">活动简介</label>
-        <div class="col-lg-11">
-            <input type="text" id="activityform-description" class="form-control" name="[description]" value=<?= $model->description?>>
-        </div>
-    </div>
     <div class="form-group">
-        <button type="submit" class="btn btn-primary col-lg-offset-6">创建</button>
+        <div class="col-lg-offset-1 col-lg-11">
+            <?= Html::submitButton('创建', ['class' => 'btn btn-primary']) ?>
+        </div>
     </div>
-    </form>
+    <?php ActiveForm::end(); ?>
 </div>

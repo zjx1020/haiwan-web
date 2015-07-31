@@ -114,13 +114,13 @@ class ActivityController extends Controller
     public function actionCheckAuth() {
         $id = (integer) $_REQUEST['id'];
         $result = array();
-        $result['canJoin'] = $this->canJoin();
+        $result['canJoin'] = $this->canJoin($id);
         $result['hasAuth'] = $this->hasAuth($id);
         return json_encode($result);
     }
 
-    private function canJoin() {
-        if (Yii::$app->user->isGuest || ActivityRecord::find()->where("account=\"" . Yii::$app->user->identity->account . "\"")->one() != null) {
+    private function canJoin($id) {
+        if (Yii::$app->user->isGuest || ActivityRecord::find()->where("account=\"" . Yii::$app->user->identity->account . "\" and activity_id=$id")->one() != null) {
             return false;
         }
         return true;
@@ -138,7 +138,7 @@ class ActivityController extends Controller
 
     public function actionJoin() {
         $id = (integer) $_REQUEST['id'];
-        if (canJoin() === false) {
+        if (canJoin($id) === false) {
             return json_encode(array('succ' => false, 'msg' => '无权限报名'));
         }
         $user = User::findOne(Yii::$app->user->identity->account);
@@ -175,7 +175,7 @@ class ActivityController extends Controller
         $activity = Activity::findOne($id);
         $user = User::findOne(Yii::$app->user->identity->account);
         $user->left_count += 1;
-        $danceRecords = DanceRecord::find()->where("activity_id=$id")->all();
+        //$danceRecords = DanceRecord::find()->where("activity_id=$id")->all();
         $transaction = Yii::$app->db->beginTransaction();
         try {
             if ($activity->delete() === false || $user->update() === false) {
@@ -183,6 +183,7 @@ class ActivityController extends Controller
                 Yii::error("update db failed");
                 return json_encode(array('succ' => false, 'msg' => $this->sysErr));
             }
+            /*
             foreach ($danceRecords as $danceRecord) {
                 if ($danceRecord->delete() === false) {
                     $transaction->rollBack();
@@ -190,6 +191,7 @@ class ActivityController extends Controller
                     return json_encode(array('succ' => false, 'msg' => $this->sysErr));
                 }
             }
+            */
         } catch (Exception $e) {
             $transaction->rollBack();
             Yii::error("db exception: " . $e->getMessage());
@@ -206,11 +208,13 @@ class ActivityController extends Controller
         }
         $activity = Activity::findOne($id);
         $activity->kind = 1;
+        /*
         $danceRecords = DanceRecord::find()->where("activity_id=$id")->all();
         $dances = array();
         foreach ($danceRecords as $danceRecord) {
             $dances[] = Dance::findOne($danceRecord->dance_name);
         }
+        */
         $transaction = Yii::$app->db->beginTransaction();
         try {
             if ($activity->update() === false) {
@@ -218,6 +222,7 @@ class ActivityController extends Controller
                 Yii::error("update db failed");
                 return json_encode(array('succ' => false, 'msg' => $this->sysErr));
             }
+            /*
             foreach ($dances as $dance) {
                 $dance->dance_count += 1;
                 if ($dance->update() === false) {
@@ -226,6 +231,7 @@ class ActivityController extends Controller
                     return json_encode(array('succ' => false, 'msg' => $this->sysErr));
                 }
             }
+            */
         } catch (Exception $e) {
             Yii::error("db exception: " . $e->getMessage());
             return json_encode(array('succ' => false, 'msg' => $this->sysErr));
@@ -237,6 +243,6 @@ class ActivityController extends Controller
     public function actionCreateActivity() {
         //$time = $_POST['[time]'];
         //return json_encode(array('time' => $time));
-        var_dump(Yii::$app->request->post());
+        //var_dump(Yii::$app->request->post());
     }
 }

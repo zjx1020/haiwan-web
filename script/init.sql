@@ -58,7 +58,7 @@ create table if not exists dance_record (
     id bigint not null auto_increment,
     dance_name varchar(128) not null,
     activity_id int not null,
-    kind tinyint not null,
+    kind tinyint not null COMMENT '0=>联欢舞码，1=>复习舞码，2=>教学舞码',
     teacher varchar(128) not null,
     primary key(id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -188,9 +188,9 @@ class SiteController extends Controller
         }
 
         if ($model->load(Yii::$app->request->post())) {
-                if ($model->createActivity()) {
-                    return $this->redirect(['site/new-activity']);
-                }
+            if ($model->createActivity()) {
+                return $this->redirect(['site/new-activity']);
+            }
         }
 
         return $this->render('createActivity', [
