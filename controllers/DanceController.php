@@ -330,13 +330,13 @@ class DanceController extends Controller
         $reviewCnt = (integer) $_REQUEST['reviewCnt'];
         $activityCnt = (integer) $_REQUEST['activityCnt'];
 
-        $dances = Dance::find()->select(['name', 'kind'])->orderBy('name')->all();
+        $dances = Dance::find()->select(['name', 'kind'])->orderBy("convert(name using gbk)")->all();
         $allDances = array();
         foreach ($dances as $dance) {
             $allDances[] = $dance->kind == 2 ? $dance->name . "*" : $dance->name;
         }
 
-        $users = User::find()->select('name')->orderBy('name')->all();
+        $users = User::find()->select('name')->orderBy("convert(name using gbk)")->all();
         $allUsers = array();
         foreach ($users as $user) {
             $allUsers[] = $user->name;
