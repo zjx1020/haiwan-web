@@ -69,16 +69,34 @@ class ActivityController extends Controller
         $result['teachDances'] = $teachDances;
 
         $reviewDances = array();
-        $dances = Dance::findBySql("select name,kind from dance where name in (select dance_name from dance_record where activity_id=$id and kind=1)")->all();
+        $tempDances = array();
+        $danceRecords = DanceRecord::findBySql("select dance_name from dance_record where activity_id=$id and kind=1")->all();
+        foreach ($danceRecords as $danceRecord) {
+            $tempDances[$danceRecord->dance_name] = $danceRecord->dance_name;
+        }
+        $danceNames = implode(',', $tempDances);
+        $dances = Dance::findBySql("select name,kind from dance where name in (\"$danceNames\")")->all();
         foreach ($dances as $dance) {
-            $reviewDances[] = $dance->name . ($dance->kind == 2 ? "*" : "");
+            $tempDances[$dance->name] = $dance->name . ($dance->kind == 2 ? "*" : "");
+        }
+        foreach ($tempDances as $tempDance) {
+            $reviewDances[] = $tempDance;
         }
         $result['reviewDances'] = $reviewDances;
 
         $activityDances = array();
-        $dances = Dance::findBySql("select name,kind from dance where name in (select dance_name from dance_record where activity_id=$id and kind=0)")->all();
+        $tempDances = array();
+        $danceRecords = DanceRecord::findBySql("select dance_name from dance_record where activity_id=$id and kind=0")->all();
+        foreach ($danceRecords as $danceRecord) {
+            $tempDances[$danceRecord->dance_name] = $danceRecord->dance_name;
+        }
+        $danceNames = implode(',', $tempDances);
+        $dances = Dance::findBySql("select name,kind from dance where name in (\"$danceNames\")")->all();
         foreach ($dances as $dance) {
-            $activityDances[] = $dance->name . ($dance->kind == 2 ? "*" : "");
+            $tempDances[$dance->name] = $dance->name . ($dance->kind == 2 ? "*" : "");
+        }
+        foreach ($tempDances as $tempDance) {
+            $activityDances[] = $tempDance;
         }
         $result['activityDances'] = $activityDances;
 
@@ -175,7 +193,6 @@ class ActivityController extends Controller
         $activity = Activity::findOne($id);
         $user = User::findOne(Yii::$app->user->identity->account);
         $user->left_count += 1;
-        //$danceRecords = DanceRecord::find()->where("activity_id=$id")->all();
         $transaction = Yii::$app->db->beginTransaction();
         try {
             if ($activity->delete() === false || $user->update() === false) {
@@ -183,15 +200,7 @@ class ActivityController extends Controller
                 Yii::error("update db failed");
                 return json_encode(array('succ' => false, 'msg' => $this->sysErr));
             }
-            /*
-            foreach ($danceRecords as $danceRecord) {
-                if ($danceRecord->delete() === false) {
-                    $transaction->rollBack();
-                    Yii::error("update db failed");
-                    return json_encode(array('succ' => false, 'msg' => $this->sysErr));
-                }
-            }
-            */
+            ActivityRecord::deleteAll("activity_id=$id");
         } catch (Exception $e) {
             $transaction->rollBack();
             Yii::error("db exception: " . $e->getMessage());
@@ -203,18 +212,18 @@ class ActivityController extends Controller
 
     public function actionFinish() {
         $id = (integer) $_REQUEST['id'];
+        $teachDancesStr = $_REQUEST['teachDances'];
+        $reviewDancesStr = $_REQUEST['reviewDances'];
+        $activityDancesStr = $_REQUEST['activityDances'];
         if ($this->hasAuth($id) === false) {
             return json_encode(array('succ' => false, 'msg' => '无权限操作'));
         }
+        $userCount = ActivityRecord::find()->where("activity_id=$id")->count();
+        if ($userCount < 0) {
+            return json_encode(array('succ' => false, 'msg' => "活动人数少于8人，无法创建活动"));
+        }
         $activity = Activity::findOne($id);
         $activity->kind = 1;
-        /*
-        $danceRecords = DanceRecord::find()->where("activity_id=$id")->all();
-        $dances = array();
-        foreach ($danceRecords as $danceRecord) {
-            $dances[] = Dance::findOne($danceRecord->dance_name);
-        }
-        */
         $transaction = Yii::$app->db->beginTransaction();
         try {
             if ($activity->update() === false) {
@@ -222,7 +231,60 @@ class ActivityController extends Controller
                 Yii::error("update db failed");
                 return json_encode(array('succ' => false, 'msg' => $this->sysErr));
             }
-            /*
+
+            $teachDancesStrWithoutUser = '';
+            if ($teachDancesStr != '') {
+                $teachDances = explode(';', $teachDancesStr);
+                foreach ($teachDances as $dance) {
+                    $arr = explode(':', $dance);
+                    $teachDancesStrWithoutUser .= $arr[0] . ',';
+                    $danceRecord = new DanceRecord();
+                    $danceRecord->dance_name = $arr[0];
+                    $danceRecord->activity_id = $id;
+                    $danceRecord->kind = 2;
+                    $danceRecord->teacher == $arr[1];
+                    if ($danceRecord->insert() === false) {
+                        $transaction->rollBack();
+                        Yii::error("insert into db failed");
+                        return json_encode(array('succ' => false, 'msg' => $this->sysErr));
+                    }
+                }
+            }
+
+            if ($reviewDancesStr != '') {
+                $reviewDances = explode(',', $reviewDancesStr);
+                foreach ($reviewDances as $dance) {
+                    $danceRecord = new DanceRecord();
+                    $danceRecord->dance_name = $dance;
+                    $danceRecord->activity_id = $id;
+                    $danceRecord->kind = 1;
+                    $danceRecord->teacher = '';
+                    if ($danceRecord->insert() === false) {
+                        $transaction->rollBack();
+                        Yii::error("insert into db failed");
+                        return json_encode(array('succ' => false, 'msg' => $this->sysErr));
+                    }
+                }
+            }
+
+            if ($activityDancesStr != '') {
+                $activityDances = explode(',', $activityDancesStr);
+                foreach ($activityDances as $dance) {
+                    $danceRecord = new DanceRecord();
+                    $danceRecord->dance_name = $dance;
+                    $danceRecord->activity_id = $id;
+                    $danceRecord->kind = 0;
+                    $danceRecord->teacher = '';
+                    if ($danceRecord->insert() === false) {
+                        $transaction->rollBack();
+                        Yii::error("insert into db failed");
+                        return json_encode(array('succ' => false, 'msg' => $this->sysErr));
+                    }
+                }
+            }
+
+            $dancesStr = $teachDancesStrWithoutUser . $reviewDancesStr . ',' . $activityDancesStr;
+            $dances = Dance::findBySql("select * from dance where name in (\"$dancesStr\")")->all();
             foreach ($dances as $dance) {
                 $dance->dance_count += 1;
                 if ($dance->update() === false) {
@@ -231,7 +293,6 @@ class ActivityController extends Controller
                     return json_encode(array('succ' => false, 'msg' => $this->sysErr));
                 }
             }
-            */
         } catch (Exception $e) {
             Yii::error("db exception: " . $e->getMessage());
             return json_encode(array('succ' => false, 'msg' => $this->sysErr));

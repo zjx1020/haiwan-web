@@ -10,6 +10,7 @@ var teachDanceCount = 3;
 var reviewDanceCount = 10;
 var activityDanceCount = 40;
 var danceSelector = null;
+var oldIndex = 0;
 $.get(BASEURL + 'activity/check-auth&id=' + id, function(data) {
   $(".cancel").hide();
   $(".finish").hide();
@@ -30,7 +31,6 @@ $(".join").click(function() {
       alert(data.msg);
     } else {
       alert(data.msg);
-      $.post(BASEURL + 'site/new-activity');
       window.location.href = window.location.href;
     }
   }, 'json');
@@ -72,10 +72,10 @@ $(".finish").click(function() {
         return;
       }
       for (var i = 0; i < data.reviewDances.length; ++i) {
-        selectedDancesMap.set(data.reviewDances[i], '');
+        selectedDancesMap.set(data.reviewDances[i], 1);
       }
       for (var i = 0; i < data.activityDances.length; ++i) {
-        selectedDancesMap.set(data.activityDances[i], '');
+        selectedDancesMap.set(data.activityDances[i], 0);
       }
       displayDance(data.reviewDances, data.activityDances);
     }, 'json');
@@ -101,6 +101,7 @@ function displayDance(reviewDances, activityDances) {
     danceSelector.className = "danceSelector";
     //danceSelector.addEventListener('onchange', changeUser(this.selectedIndex));
     danceSelector.setAttribute('onchange', 'changeDance(this)');
+    danceSelector.setAttribute('onclick', 'clickDanceSelector(this.selectedIndex)');
     danceSelector.options.add(new Option("", 0));
     for (var i = 0; i < dances.length; ++i) {
       danceSelector.options.add(new Option(dances[i], i + 1));
@@ -124,8 +125,9 @@ function displayDance(reviewDances, activityDances) {
   node.appendChild(button);
 }
 
-function createDanceTable(danceSelector, title, defaultDanceCnt, maxDanceCnt, cntSelectorName) {
+function createDanceTable(id, danceSelector, title, defaultDanceCnt, maxDanceCnt, cntSelectorName) {
   var table = document.createElement("table");
+  table.id = id;
   table.createCaption().innerHTML = title;
   table.caption.style.textAlign = "center";
   table.className = "col-lg-12";
@@ -143,7 +145,7 @@ function createDanceTable(danceSelector, title, defaultDanceCnt, maxDanceCnt, cn
 }
 
 function createTeachDanceTable(danceSelector, maxDanceCnt, cntSelectorName) {
-  var table = createDanceTable(danceSelector, "教学舞码", defaultTeachDanceCount, maxDanceCnt, cntSelectorName); 
+  var table = createDanceTable("teachDanceTable", danceSelector, "教学舞码", defaultTeachDanceCount, maxDanceCnt, cntSelectorName); 
   
   addTeachDance(table, danceSelector, defaultTeachDanceCount); 
 
@@ -151,7 +153,7 @@ function createTeachDanceTable(danceSelector, maxDanceCnt, cntSelectorName) {
 }
 
 function createReviewDanceTable(danceSelector, maxDanceCnt, cntSelectorName, dances) {
-  var table = createDanceTable(danceSelector, "复习舞码", defaultReviewDanceCount, maxDanceCnt, cntSelectorName); 
+  var table = createDanceTable("reviewDanceTable", danceSelector, "复习舞码", defaultReviewDanceCount, maxDanceCnt, cntSelectorName); 
   
   addDance(table, danceSelector, defaultReviewDanceCount, dances);
 
@@ -159,7 +161,7 @@ function createReviewDanceTable(danceSelector, maxDanceCnt, cntSelectorName, dan
 }
 
 function createActivityDanceTable(danceSelector, maxDanceCnt, cntSelectorName, dances) {
-  var table = createDanceTable(danceSelector, "联欢舞码", defaultActivityDanceCount, maxDanceCnt, cntSelectorName); 
+  var table = createDanceTable("activityDanceTable", danceSelector, "联欢舞码", defaultActivityDanceCount, maxDanceCnt, cntSelectorName); 
   
   addDance(table, danceSelector, defaultActivityDanceCount, dances);
 
@@ -209,19 +211,19 @@ function deleteTeachDance(table, count) {
 }
 
 // 格式：每行4首舞
-//TODO
 function addDance(table, danceSelector, count, dances) {
-  var col = 4;
+  var col = 0;
   var row = null;
   var len = table.rows.length;
   if (len != 0) {
-    col -= table.rows[len - 1].cells.length;
-    if (col != 4) {
+    var lastRowLen = table.rows[len - 1].cells.length;
+    if (lastRowLen != 4) {
+      col = lastRowLen;
       row = table.rows[len - 1];
     }
   }
   for (var i = 0; i < count; ++i) {
-    if (col == 4) {
+    if (row == null || col == 4) {
       row = table.insertRow();
       col = 0;
     }
@@ -240,37 +242,28 @@ function addDance(table, danceSelector, count, dances) {
 }
 
 // 格式：每行4首舞
-function deleteDance(table, count, oldCount) {
+function deleteDance(table, count) {
   var length = table.rows.length;
-  var lastCellsCnt = oldCount % 4;
-  var toDelRows = 0;
-  var toDelCols = 0;
-  if (count < lastCellsCnt) {
-    toDelCols = count;
-  } else {
-    toDelCols = (count - lastCellsCnt) % 4;
-    toDelRows = 1 + Math.floor((count - lastCellsCnt) / 4);
-  }
-  for (var i = length - 1; length - i <= toDelRows; --i) {
-    var cellLength = table.rows[i].cells.length;
-    for (var j = cellLength - 1; j >=0; --j) {
+  for (var i = length - 1; i >=0; --i) {
+    if (count == 0) {
+      break;
+    }
+    var cellLen = table.rows[i].cells.length;
+    var j = cellLen - 1;
+    for (; j >=0; --j) {
+      if (count == 0) {
+        break;
+      }
       var index = table.rows[i].cells[j].firstChild.selectedIndex;
       if (index > 0) {
         selectedDancesMap.delete(dances[index - 1]);
       }
+      table.rows[i].deleteCell(j);
+      --count;
     }
-    table.deleteRow(i);
-  }
-  length = table.rows.length;
-  var lastRow = table.rows[length - 1];
-  var lastRowCells = lastRow.cells;
-  var lastRowCellsLength = lastRowCells.length;
-  for (var i = lastRowCellsLength - 1; lastRowCellsLength - i <= toDelCols; --i) {
-    var index = lastRowCells[i].firstChild.selectedIndex;
-    if (index > 0) {
-      selectedDancesMap.delete(dances[index - 1]);
+    if (j < 0) {
+      table.deleteRow(i);
     }
-    lastRow.deleteCell(i);
   }
 }
 
@@ -283,6 +276,10 @@ function changeUser(select) {
   }
 }
 
+function clickDanceSelector(index) {
+  oldIndex = index;
+}
+
 function changeDance(select) {
   var index = select.selectedIndex;
   if (index > 0) {
@@ -291,7 +288,16 @@ function changeDance(select) {
       select.selectedIndex = 0;
       alert("\"" + dance + "\"重复了");
     } else {
-      selectedDancesMap.set(dance, '');
+      var kind = 0;
+      if (select.parentNode.parentNode.parentNode.parentNode.id == "teachDanceTable") {
+        kind = 2;
+      } else if (select.parentNode.parentNode.parentNode.parentNode.id == "reviewDanceTable") {
+        kind = 1;
+      }
+      if (oldIndex != 0) {
+        selectedDancesMap.delete(dances[oldIndex - 1]);
+      }
+      selectedDancesMap.set(dance, kind);
     }
   }
 }
@@ -310,14 +316,14 @@ function changeDanceCount(select, danceSelector) {
     if (select.selectedIndex > reviewDanceCount) {
       addDance(table, danceSelector, select.selectedIndex - reviewDanceCount, null);
     } else {
-      deleteDance(table, reviewDanceCount - select.selectedIndex, reviewDanceCount);
+      deleteDance(table, reviewDanceCount - select.selectedIndex);
     }
     reviewDanceCount = select.selectedIndex;
   } else {
     if (select.selectedIndex > activityDanceCount) {
       addDance(table, danceSelector, select.selectedIndex - activityDanceCount, null);
     } else {
-      deleteDance(table, activityDanceCount - select.selectedIndex, activityDanceCount);
+      deleteDance(table, activityDanceCount - select.selectedIndex);
     }
     activityDanceCount = select.selectedIndex;
   }
@@ -370,4 +376,61 @@ function publish() {
   }
 
   // 更新活动信息到服务器
+  if (selectedDancesMap.size != (teachDanceCount + reviewDanceCount + activityDanceCount)) {
+    alert("设定的舞码数和实际舞码数不相符，请联系管理员检查！");
+    return;
+  }
+  if (activityDanceCount < 20) {
+    alert("联欢舞码少于20条，请多加点舞码！");
+    return;
+  }
+  var table = document.getElementById("teachDanceTable");
+  var teachDances = '';
+  for (var i = 0; i < table.rows.length; ++i) {
+    var teachDance = '';
+    if (table.rows[i].cells.length == 5) {
+      if (i != 0) {
+        teachDances += ';';
+      }
+      teachDance = dances[table.rows[i].cells[1].firstChild.selectedIndex - 1] + ':';
+      for (var j = 0; j < table.rows[i].cells[3].childNodes.length; ++j) {
+        var userIndex = table.rows[i].cells[3].childNodes[j].selectedIndex;
+        if (userIndex == 0) {
+          break;
+        } else {
+          if (j != 0) {
+            teachDance += ',';
+          }
+          teachDance += users[userIndex - 1];
+        }
+      }
+      teachDances += teachDance;
+    }
+  }
+  table = document.getElementById("reviewDanceTable");
+  var reviewDances = '';
+  for (var i = 0; i < table.rows.length; ++i) {
+    for (var j = 0; j < table.rows[i].cells.length; ++j) {
+      reviewDances += dances[table.rows[i].cells[j].firstChild.selectedIndex - 1] + ',';
+    }
+  }
+  reviewDances = reviewDances.substr(0, reviewDances.length - 1);
+
+  table = document.getElementById("activityDanceTable");
+  var activityDances = '';
+  for (var i = 0; i < table.rows.length; ++i) {
+    for (var j = 0; j < table.rows[i].cells.length; ++j) {
+      activityDances += dances[table.rows[i].cells[j].firstChild.selectedIndex - 1] + ',';
+    }
+  }
+  activityDances = activityDances.substr(0, activityDances.length - 1);
+
+  $.post(BASEURL + 'activity/finish&id=' + id + '&teachDances=' + teachDances + '&reviewDances=' + reviewDances + '&activityDances=' + activityDances, function(data) {
+    if (data.succ == false) {
+      alert(data.msg);
+    } else {
+      alert(data.msg);
+      window.location.href = window.location.href;
+    }
+  }, 'json');
 }

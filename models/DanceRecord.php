@@ -29,7 +29,7 @@ class DanceRecord extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['dance_name', 'activity_id', 'kind', 'teacher'], 'required'],
+            [['dance_name', 'activity_id', 'kind'], 'required'],
             [['activity_id', 'kind'], 'integer'],
             [['dance_name', 'teacher'], 'string', 'max' => 128]
         ];
