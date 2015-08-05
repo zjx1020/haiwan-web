@@ -1,5 +1,6 @@
 use fdc;
 set names utf8;
+insert into dance(name,country,kind,dance_level,description,dance_count) values('再见','未知',1,1,'海湾传统结束舞',0);
 insert into dance(name,country,kind,dance_level,description,dance_count) values('西班牙之心','以色列',1,1,'',0);
 insert into dance(name,country,kind,dance_level,description,dance_count) values('好汉','以色列',0,2,'',0);
 insert into dance(name,country,kind,dance_level,description,dance_count) values('舞在桌上','以色列',1,3,'',0);

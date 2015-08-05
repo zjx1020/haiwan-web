@@ -12,6 +12,7 @@ use app\models\DanceLeader;
 use app\models\User;
 use app\models\Country;
 use yii\web\UploadedFile;
+use yii\log\Logger;
 
 require_once (dirname(__FILE__) . '/../vendor/phpoffice/phpexcel/Classes/PHPExcel.php'); 
 
@@ -19,7 +20,7 @@ class DanceController extends Controller
 {
     public function actionGenerateDanceTree()
     {
-        $dances = Dance::find()->select(['country', 'name', 'kind'])->orderBy('country')->all();
+        $dances = Dance::find()->select(['country', 'name', 'kind'])->orderBy("convert(country using gbk)")->all();
         $dancesArr = array();
         foreach ($dances as $dance) {
             $country = $dance->country;
@@ -193,6 +194,7 @@ class DanceController extends Controller
      * 1、单、双人舞各选一半
      * 2、从舞码库里选出上一次没跳过且不在这次教舞、复习舞里的所有舞码
      */
+     /*
     public function actionGenerateActivityDances() {
         $num = (integer) $_REQUEST['num'];
         $id = (integer) $_REQUEST['id'];
@@ -254,30 +256,29 @@ class DanceController extends Controller
             fwrite($file, $name . "\n");
         }
     }
+    */
 
     /**
      * 自动生成舞码逻辑：
      * 1、单、双人舞各选一半
      * 2、从舞码库里选出上一次没跳过且不在这次教舞、复习舞里的所有舞码
+     * 3、最后一首固定为"再见"
      */
     public function generateActivityDances($num, $reviewDances) {
         $coupleDanceNum = $num / 2;
         $singleDanceNum = $num - $coupleDanceNum;
         $lastActivity = Activity::find()->select(['id'])->where("kind=1")->orderBy('time DESC')->One();
-        if ($lastActivity === null) {
-            $filter = "";
-        } else {
-            $lastId = $lastActivity['id'];
-            $filter = " and name not in (select dance_name from dance_record where activity_id=$lastId)";
-        }
+        
         for ($i = 0; $i < count($reviewDances); ++$i) {
             $reviewDances[$i].rtrim('*');
-            $reviewDances[$i] = '"' . $reviewDances[$i] . '"';
         }
-        $filter .= " and name not in (" . implode(',', $reviewDances) .")";
-
-        $sql = "select name from dance where kind=1";
-        $dances = Dance::findBySql($sql . $filter)->all();
+        if ($lastActivity != null) {
+            $lastId = $lastActivity['id'];
+            $filter = "name not in (select dance_name from dance_record where activity_id=$lastId)";
+            $dances = Dance::find()->select(['name'])->where("kind=1")->andWhere(['not in', 'name', $reviewDances])->andWhere($filter)->all();
+        } else {
+            $dances = Dance::find()->select(['name'])->where("kind=1")->andWhere(['not in', 'name', $reviewDances])->all();
+        }
         if (count($dances) < $singleDanceNum) {
             return null;
         }
@@ -287,8 +288,13 @@ class DanceController extends Controller
             $singleDances[$i++] = $dance->name;
         }
         
-        $sql = "select name from dance where kind=2";
-        $dances = Dance::findBySql($sql . $filter)->all();
+        if ($lastActivity != null) {
+            $lastId = $lastActivity['id'];
+            $filter = "name not in (select dance_name from dance_record where activity_id=$lastId)";
+            $dances = Dance::find()->select(['name'])->where("kind=2")->andWhere(['not in', 'name', $reviewDances])->andWhere($filter)->all();
+        } else {
+            $dances = Dance::find()->select(['name'])->where("kind=2")->andWhere(['not in', 'name', $reviewDances])->all();
+        }
         if (count($dances) < $coupleDanceNum) {
             return null;
         }
@@ -298,7 +304,6 @@ class DanceController extends Controller
             $coupleDances[$i++] = $dance->name;
         }
 
-        $file = fopen(dirname(__FILE__) . "/../web/uploads/result", "w");
         $leftSingle = count($singleDances);
         $leftCouple = count($coupleDances);
         $result = array();
@@ -323,6 +328,7 @@ class DanceController extends Controller
             }
             $result[] = $name;
         }
+        $result[] = '再见';
         return $result;
     }
 
@@ -346,9 +352,13 @@ class DanceController extends Controller
         $dances = Dance::findBySql($sql)->all();
         $reviewDances = array();
         foreach ($dances as $dance) {
+            $reviewDances[] = $dance->name;
+        }
+        $activityDances = $this->generateActivityDances($activityCnt - 1, $reviewDances);
+        unset($reviewDances);
+        foreach ($dances as $dance) {
             $reviewDances[] = $dance->kind == 2 ? $dance->name . "*" : $dance->name;
         }
-        $activityDances = $this->generateActivityDances($activityCnt, $reviewDances);
 
         return json_encode(array('allDances' => $allDances, 'allUsers' => $allUsers, 'reviewDances' => $reviewDances, 'activityDances' => $activityDances));
     }

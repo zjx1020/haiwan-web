@@ -187,11 +187,13 @@ class SiteController extends Controller
             $model->cost = $activity->cost;
         }
 
+        /*
         if ($model->load(Yii::$app->request->post())) {
             if ($model->createActivity()) {
                 return $this->redirect(['site/new-activity']);
             }
         }
+        */
 
         return $this->render('createActivity', [
             'model' => $model,

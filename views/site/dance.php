@@ -37,7 +37,7 @@ $this->registerJsFile(Url::base() . '/js/dance_ztree.js', ['depends'=>['diselop\
                 <th class="col-lg-2">舞蹈简介：</th>
                 <td class="description" colspan=3></td>
             </tr>
-            <tr>
+            <!--tr>
                 <td class="col-lg-1"></td>
                 <th class="col-lg-2">领舞者：</th>
                 <td class="leaders" colspan=3></td>
@@ -46,7 +46,7 @@ $this->registerJsFile(Url::base() . '/js/dance_ztree.js', ['depends'=>['diselop\
                 <td class="col-lg-1"></td>
                 <td class="col-lg-2"></td>
                 <td class="btn btn-primary leadDanceBtn">我能领舞</td>
-            <tr>
+            <tr-->
             <tr>
                 <td class="col-lg-1"></td>
                 <th class="col-lg-2">教学记录：</th>

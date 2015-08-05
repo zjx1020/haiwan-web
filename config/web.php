@@ -44,12 +44,6 @@ $config = [
         'db' => require(__DIR__ . '/db.php'),
     ],
     'params' => $params,
-    'modules' => [
-        'treemanager' =>  [
-            'class' => '\kartik\tree\Module',
-            // other module settings, refer detailed documentation
-        ]
-    ],
 ];
 
 if (YII_ENV_DEV) {

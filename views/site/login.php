@@ -24,9 +24,9 @@ $this->params['breadcrumbs'][] = $subtitle;
 
     <?= $form->field($model, 'password')->passwordInput(['maxlength' => 20, 'placeholder' => '请输入密码']) ?>
 
-    <?= $form->field($model, 'rememberMe', [
+    <!--?= $form->field($model, 'rememberMe', [
         'template' => "<div class=\"col-lg-offset-1 col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
-    ])->checkbox() ?>
+    ])->checkbox() ?-->
 
     <div class="form-group">
         <div class="col-lg-offset-1 col-lg-11">
