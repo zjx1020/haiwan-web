@@ -105,7 +105,7 @@ class DanceController extends Controller
         $params = $_REQUEST;
         $name = $params['name'];
         $query = new Query;
-        $rows = $query->select(['activity.time', 'dance_record.teacher'])->from(['dance_record', 'activity'])->where("dance_record.activity_id=activity.id and dance_record.kind=2 and dance_name=\"$name\"")->orderBy('activity.time')->all();
+        $rows = $query->select(['activity.time', 'dance_record.teacher'])->from(['dance_record', 'activity'])->where("dance_record.activity_id=activity.id and dance_record.kind=2 and dance_name=\"$name\"")->orderBy('activity.time DESC' )->all();
 
         return json_encode($rows);
     }

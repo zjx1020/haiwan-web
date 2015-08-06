@@ -137,7 +137,7 @@ class ActivityController extends Controller
     }
 
     private function canJoin($id) {
-        if (Yii::$app->user->isGuest || ActivityRecord::find()->where("account=\"" . Yii::$app->user->identity->account . "\" and activity_id=$id")->one() != null) {
+        if (Yii::$app->user->isGuest || ActivityRecord::find()->where("account=\"" . Yii::$app->user->identity->account . "\" and activity_id=$id")->one() != null || Yii::$app->user->identity->account == 'haiwan') {
             return false;
         }
         return true;

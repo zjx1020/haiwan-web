@@ -13,6 +13,11 @@ use app\models\UploadForm;
 use yii\web\UploadedFile;
 use app\models\Activity;
 use app\models\ActivityForm;
+use yii\data\ActiveDataProvider;
+use yii\widgets\ListView;
+use yii\db\Query;
+use app\models\ActivityRecord;
+use app\models\PayRecord;
 
 class SiteController extends Controller
 {
@@ -144,6 +149,29 @@ class SiteController extends Controller
             }
         }
         return $this->render('modifyProfile', ['model' => $model]);
+    }
+
+    public function actionConsumeRecord() {
+        return $this->render('consumeRecord');
+    }
+
+    public function actionGetConsumeRecord() {
+        $offset = (integer) $_REQUEST['offset'];
+        $limit = (integer) $_REQUEST['limit'];
+
+        $query = new Query;
+        $account = Yii::$app->user->identity->account;
+        $activityRecord = null;
+        $activityRecordCnt = 0;
+        if ($account != 'haiwan') {
+            $activityRecordCnt = ActivityRecord::find()->where("account=\"$account\"")->count();
+            $activityRecord = $query->select(['activity_record.time AS time', 'CONCAT(activity.time, " ", activity.name) AS title'])->from(['activity_record', 'activity'])->where("activity_record.account=\"$account\" and activity_record.activity_id=activity.id")->orderBy('activity_record.time DESC')->limit($limit)->offset($offset)->all();
+        }
+        $query = new Query;
+        $consumeRecord = $query->select(['time', 'owner', 'money', 'description'])->from('pay_record')->where("account=\"$account\"")->limit($limit)->offset($offset)->all();
+        $consumeRecordCnt = PayRecord::find()->where("account=\"$account\"")->count();
+
+        return json_encode(array('account' => $account, 'consumeRecordCnt' => $consumeRecordCnt, 'consumeRecord' => $consumeRecord, 'activityRecordCnt' => $activityRecordCnt, 'activityRecord' => $activityRecord));
     }
 
     public function actionActivity()

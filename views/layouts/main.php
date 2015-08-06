@@ -56,6 +56,7 @@ AppAsset::register($this);
                             'label' => Yii::$app->user->identity->name,
                             'items' => [
                                 ['label' => '个人资料', 'url' => ['/site/profile']],
+                                ['label' => '消费记录', 'url' => ['/site/consume-record']],
                                 ['label' => '修改密码', 'url' => ['/site/modify-password']],
                                 ['label' => '退出', 'url' => ['/site/logout'], 'linkOptions' => ['data-method' => 'post']],
                             ],

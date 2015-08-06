@@ -18,7 +18,7 @@ class UserForm extends Model
     public $email;
     public $birth;
     public $join_date;
-    public $leader_dance_list;
+    //public $leader_dance_list;
     public $left_count;
     public $rememberMe = true;
 
@@ -36,7 +36,7 @@ class UserForm extends Model
             'email' => '邮箱',
             'birth' => '生日',
             'join_date' => '首次加入海湾的时间',
-            'leader_dance_list' => '可领跳舞码',
+            //'leader_dance_list' => '可领跳舞码',
             'left_count' => '剩余活动次数',
             'rememberMe' => '记住我',
         ];
@@ -143,13 +143,21 @@ class UserForm extends Model
         $user = User::findOne($account);
         if ($user) {
             $this->name = $user->name;
-            $this->sex = $user->sex == 0 ? '男' : '女';
+            if ($account == 'haiwan') {
+                $this->sex = '未知';
+            } else {
+                $this->sex = $user->sex == 0 ? '男' : '女';
+            }
             $this->phone = $user->phone;
             $this->email = $user->email;
             $this->birth = $user->birth;
             $this->join_date = $user->join_date == "0000-00-00" ? "未知" : $user->join_date;
-            $this->leader_dance_list = '还没有可以领跳的舞哦';
-            $this->left_count = $user->left_count;
+            //$this->leader_dance_list = '还没有可以领跳的舞哦';
+            if ($account == 'haiwan') {
+                $this->left_count = 0;
+            } else {
+                $this->left_count = $user->left_count;
+            }
             return true;
         } else {
             Yii::error("get db user by account=$account failed");
