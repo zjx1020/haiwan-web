@@ -110,6 +110,28 @@ class DanceController extends Controller
         return json_encode($rows);
     }
 
+    public function actionAddDance() {
+        $dance = new Dance;
+        $dance->name = $_REQUEST['name'];
+        $dance->country = $_REQUEST['country'];
+        $dance->kind = $_REQUEST['kind'];
+        $dance->dance_level = $_REQUEST['dance_level'];
+        $dance->description = $_REQUEST['description'];
+        $dance->dance_count = 0;
+        try {
+            if ($dance->insert() === false) {
+                Yii::error("insert into db failed");
+                return json_encode(array('succ' => false));
+            }
+        } catch (yii\db\IntegrityException $e) {
+            return json_encode(array('succ' => false, 'exist' => true));
+        } catch (Exception $e) {
+            Yii::error("db exception: " . $e->getMessage());
+            return json_encode(array('succ' => false));
+        }
+        return json_encode(array('succ' => true));
+    }
+
     public function actionAddDances() {
         $filePath = $_REQUEST['filePath'];
         if (!isset($filePath)) {
@@ -361,6 +383,12 @@ class DanceController extends Controller
         }
 
         return json_encode(array('allDances' => $allDances, 'allUsers' => $allUsers, 'reviewDances' => $reviewDances, 'activityDances' => $activityDances));
+    }
+
+    public function actionGetAllCountry() {
+        $query = new Query;
+        $countries = $query->select('name')->from('country')->orderBy("convert(name using gbk)")->all();
+        return json_encode($countries);
     }
 
     private static $DANCE_LEVEL = array(

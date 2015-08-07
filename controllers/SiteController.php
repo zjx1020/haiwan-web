@@ -232,26 +232,7 @@ class SiteController extends Controller
         return $this->render('dance');
     }
 
-/*
-    public function actionTest() {
-    $model = new UploadForm();
-
-    $val = "value";
-    if (Yii::$app->request->isPost) {
-        $model->file = UploadedFile::getInstance($model, 'file');
-
-        if ($model->file && $model->validate()) {                
-            $model->file->saveAs('uploads/' . $model->file->baseName . '.' . $model->file->extension);
-        } else {
-            if ($model->file == null) {
-                $val = "file is null";
-            } else {
-                $val = "validate not pass";
-            }
-        }
+    public function actionRookie() {
+        return $this->render('rookie');
     }
-
-    return $this->render('test', ['model' => $model, 'val' => $val]);
-    }
-    */
 }

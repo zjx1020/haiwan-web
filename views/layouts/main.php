@@ -49,7 +49,7 @@ AppAsset::register($this);
                         ]
                     ],
                     ['label' => '舞码大全', 'url' => ['/site/dances']],
-                    //['label' => '舞码大全', 'url' => ['/site/test']],
+                    ['label' => '新人专区', 'url' => ['/site/rookie']],
                     Yii::$app->user->isGuest ?
                         ['label' => '登录', 'url' => ['/site/login']] :
                         [
