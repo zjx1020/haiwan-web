@@ -39,8 +39,13 @@ class DanceController extends Controller
             $childNodes[] = array('name' => $country, 'children' => $childs);
         }
         $nodes = array('name' => '舞码大全', 'open' => true, 'children' => $childNodes);
+        if (Yii::$app->user->isGuest || Yii::$app->user->identity->account != 'haiwan') {
+            $hasAuth = false;
+        } else {
+            $hasAuth = true;
+        }
 
-        return json_encode($nodes);
+        return json_encode(array('ztree' => $nodes, 'hasAuth' => $hasAuth));
     }
 
     public function actionDisplayDance() {

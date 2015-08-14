@@ -7,7 +7,7 @@ use yii\widgets\ActiveForm;
 /* @var $model app\models\UserForm */
 /* @var $form ActiveForm */
 
-$this->title = '上海海湾土风舞社-修改密码';
+$this->title = Yii::$app->params['webTitle'] . '-修改密码';
 $this->params['breadcrumbs'][] = '修改密码';
 ?>
 <div class="modifyPassword">

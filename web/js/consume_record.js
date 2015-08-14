@@ -7,39 +7,37 @@ function update(data) {
   var body = document.getElementById("consumeRecord");
   var consumeTable = document.getElementById("consumeRecordTable");
   var activityTable = document.getElementById("activityRecordTable");
-  var consumePage = document.getElementById("consumeRecordPage");
-  var activityPage = document.getElementById("activityRecordPage");
-  if (data.account == 'haiwan' && body.hasChildNodes(activityTable)) {
-    body.removeChild(activityTable);
-  }
-
-  if (data.consumeRecord.length > 0) {
-    for (var i = 0; i < data.consumeRecord.length; ++i) {
-      var record = data.consumeRecord[i];
-      consumeTable.rows[i + 1].cells[0].innerHTML = record.time;
-      consumeTable.rows[i + 1].cells[1].innerHTML = record.owner;
-      consumeTable.rows[i + 1].cells[2].innerHTML = record.money;
-      consumeTable.rows[i + 1].cells[3].innerHTML = record.description;
+  var recordPage = document.getElementById("recordPage");
+  if (data.account == 'haiwan') {
+    if (body.hasChildNodes(activityTable)) {
+      body.removeChild(activityTable);
     }
-    if (consumePage == null && data.consumeRecordCnt > pageSize) {
-      consumeTable.insertAdjacentElement('afterEnd', generatePage(data.consumeRecordCnt, "consumeRecordPage"));
-    } 
-  }
-  if (consumePage == null) {
-      consumeTable.insertAdjacentElement('afterEnd', generatePage(70, "consumeRecordPage"));
+    if (data.record.length > 0) {
+      for (var i = 0; i < data.record.length; ++i) {
+        var record = data.record[i];
+        consumeTable.rows[i + 1].cells[0].innerHTML = record.time;
+        consumeTable.rows[i + 1].cells[1].innerHTML = record.owner;
+        consumeTable.rows[i + 1].cells[2].innerHTML = record.money;
+        consumeTable.rows[i + 1].cells[3].innerHTML = record.description;
+      }
+      if (recordPage == null && data.recordCnt > pageSize) {
+        consumeTable.insertAdjacentElement('afterEnd', generatePage(data.recordCnt, "recordPage"));
+      } 
     }
-
-  if (data.activityRecord.length > 0) {
-    for (var i = 0; i < data.activityRecord.length; ++i) {
-      var record = data.activityRecord[i];
-      activityTable.rows[i + 1].cells[0].innerHTML = record.time;
-      activityTable.rows[i + 1].cells[1].innerHTML = record.title;
+  } else {
+    if (body.hasChildNodes(consumeTable)) {
+      body.removeChild(consumeTable);
     }
-    if (activityPage == null && data.activityRecordCnt > pageSize) {
-      activityTable.insertAdjacentElement('afterEnd', generatePage(data.activityRecordCnt, "activityRecordPage"));
-    }
-    if (activityPage == null) {
-    activityTable.insertAdjacentElement('afterEnd', generatePage(140, "activityRecordPage"));
+    if (data.record.length > 0) {
+      for (var i = 0; i < data.record.length; ++i) {
+        var record = data.record[i];
+        activityTable.rows[i + 1].cells[0].innerHTML = record.time;
+        activityTable.rows[i + 1].cells[1].innerHTML = record.title;
+        activityTable.rows[i + 1].cells[2].innerHTML = record.count;
+      }
+      if (recordPage == null && data.recordCnt > pageSize) {
+        activityTable.insertAdjacentElement('afterEnd', generatePage(data.recordCnt, "recordPage"));
+      }
     }
   }
 }

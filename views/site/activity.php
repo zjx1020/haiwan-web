@@ -4,7 +4,7 @@ use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 
-$this->title = '上海海湾土风舞社-活动';
+$this->title = Yii::$app->params['webTitle'] . '-活动';
 $subtitle = '历史活动';
 $this->params['breadcrumbs'][] = $subtitle;
 $this->registerJsFile(Url::base() . '/js/activity_ztree.js', ['depends'=>['diselop\ztree\ZTreeAsset']]);

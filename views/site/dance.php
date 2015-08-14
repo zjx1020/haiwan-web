@@ -8,15 +8,15 @@ use app\models\UploadForm;
 
 /* @var $this yii\web\View */
 
-$this->title = '上海海湾土风舞社-舞码大全';
+$this->title = Yii::$app->params['webTitle'] . '-舞码大全';
 $subtitle = '舞码大全';
 $this->params['breadcrumbs'][] = $subtitle;
 $this->registerJsFile(Url::base() . '/js/dance_ztree.js', ['depends'=>['diselop\ztree\ZTreeAsset']]);
 ?>
 <div class="dance">
-    <div class="col-lg-3">
+    <div id="leftPage" class="col-lg-3">
         <ul id="danceTree" class="ztree" style="overflow:auto;height:500px"></ul>
-        <div class="btn-group btn-group-xs">
+        <div id="addDanceBtns" class="btn-group btn-group-xs">
         <button type="button" class="btn btn-primary addDance">新增一条舞码</button>
         <!--button type="button" class="btn btn-primary addDances">新增多条舞码</button-->
         </div>

@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\UserForm */
 
-$this->title = "上海海湾土风舞社-个人资料";
+$this->title = Yii::$app->params['webTitle'] . "-个人资料";
 $this->params['breadcrumbs'][] = '个人资料';
 ?>
 <div class="profile">

@@ -16,6 +16,7 @@ use app\models\ActivityForm;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ListView;
 use yii\db\Query;
+use yii\db\Connection;
 use app\models\ActivityRecord;
 use app\models\PayRecord;
 
@@ -152,7 +153,17 @@ class SiteController extends Controller
     }
 
     public function actionConsumeRecord() {
-        return $this->render('consumeRecord');
+        $account = Yii::$app->user->identity->account;
+        if ($account == 'haiwan') {
+            $name = Yii::$app->user->identity->name;
+            $income = PayRecord::find()->where("owner=\"$name\"")->sum('money');
+            $pay = PayRecord::find()->where("payer=\"$name\"")->sum('money');
+            $leftCount = $income - $pay;
+        } else {
+            $user = User::find()->select('left_count')->where("account=\"$account\"")->one();
+            $leftCount = $user->left_count;
+        }
+        return $this->render('consumeRecord', ['leftCount' => $leftCount]);
     }
 
     public function actionGetConsumeRecord() {
@@ -161,17 +172,29 @@ class SiteController extends Controller
 
         $query = new Query;
         $account = Yii::$app->user->identity->account;
-        $activityRecord = null;
-        $activityRecordCnt = 0;
+        $name = Yii::$app->user->identity->name;
+        $record = null;
+        $recordCnt = 0;
         if ($account != 'haiwan') {
-            $activityRecordCnt = ActivityRecord::find()->where("account=\"$account\"")->count();
-            $activityRecord = $query->select(['activity_record.time AS time', 'CONCAT(activity.time, " ", activity.name) AS title'])->from(['activity_record', 'activity'])->where("activity_record.account=\"$account\" and activity_record.activity_id=activity.id")->orderBy('activity_record.time DESC')->limit($limit)->offset($offset)->all();
+            $recordCnt = ActivityRecord::find()->where("account=\"$account\"")->count();
+            $sql = "select activity_record.time AS time,CONCAT(activity.time, ' ', activity.name) AS title,if(activity.cost>0,-1,0) as count from activity_record,activity where activity_record.account=\"$account\" and activity_record.activity_id=activity.id";
+            $sql .= " union all select time,\"充值活动次数\" as title,if(money>50,10,1) as count from pay_record where payer=\"$name\" and owner=\"海湾\" order by time desc limit $limit offset $offset";
+            $connection = Yii::$app->db;
+            $record = $connection->createCommand($sql)->queryAll();
+        } else {
+            $query = new Query;
+            $record = $query->select(['time', 'payer', 'owner', 'money', 'description'])->from('pay_record')->where("payer=\"$name\" or owner=\"$name\"")->limit($limit)->offset($offset)->all();
+            for ($i = 0; $i < count($record); $i++) {
+                if ($record[$i]['payer'] == $name) {
+                    $record[$i]['money'] *= -1;
+                } else {
+                    $record[$i]['owner'] = $record[$i]['payer'];
+                }
+            }
+            $recordCnt = PayRecord::find()->where("payer=\"$name\" or owner=\"$name\"")->count();
         }
-        $query = new Query;
-        $consumeRecord = $query->select(['time', 'owner', 'money', 'description'])->from('pay_record')->where("account=\"$account\"")->limit($limit)->offset($offset)->all();
-        $consumeRecordCnt = PayRecord::find()->where("account=\"$account\"")->count();
 
-        return json_encode(array('account' => $account, 'consumeRecordCnt' => $consumeRecordCnt, 'consumeRecord' => $consumeRecord, 'activityRecordCnt' => $activityRecordCnt, 'activityRecord' => $activityRecord));
+        return json_encode(array('account' => $account, 'recordCnt' => $recordCnt, 'record' => $record));
     }
 
     public function actionActivity()

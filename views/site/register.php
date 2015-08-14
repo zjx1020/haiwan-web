@@ -7,7 +7,7 @@ use yii\widgets\ActiveForm;
 /* @var $model app\models\RegisterForm */
 /* @var $form ActiveForm */
 
-$this->title = '上海海湾土风舞社-注册';
+$this->title = Yii::$app->params['webTitle'] . '-注册';
 $subtitle = '注册';
 $this->params['breadcrumbs'][] = $subtitle;
 ?>

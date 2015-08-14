@@ -86,8 +86,13 @@ var setting = {
 var zNodes;
 var ztree;
 $.get(BASEURL + 'dance/generate-dance-tree', function(data) {
-  zNodes = data;
+  zNodes = data.ztree;
   ztree = $.fn.zTree.init($("#danceTree"), setting, zNodes);
+  if (data.hasAuth == false) {
+    var leftPage = document.getElementById("leftPage");
+    var button = document.getElementById("addDanceBtns");
+    leftPage.removeChild(button);
+  }
 }, 'json');
 
 $.get(BASEURL + 'dance/display-all-dance', function(data) {
@@ -111,7 +116,9 @@ $(".addDance").click(function() {
     var select = document.getElementById("dance-country");
     select.options.add(new Option("未知", "未知"));
     for (var i = 0; i < countries.length; ++i) {
-      select.options.add(new Option(countries[i].name, countries[i].name));
+      if (countries[i].name != '未知') {
+        select.options.add(new Option(countries[i].name, countries[i].name));
+      }
     }
   }, 'json');
 });

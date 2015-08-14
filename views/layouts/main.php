@@ -19,7 +19,7 @@ AppAsset::register($this);
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="zengjingxiang"/> 
     <meta name="Copyright" content="zengjingxiang"/> 
-    <meta name="description" content="上海海湾土风舞社"/>
+    <meta name="description" content="海湾之家"/>
     <meta name="keywords" content="上海，土风舞，海湾"/>
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
@@ -32,7 +32,7 @@ AppAsset::register($this);
     <div class="wrap">
         <?php
             NavBar::begin([
-                'brandLabel' => '上海海湾土风舞社',
+                'brandLabel' => Yii::$app->params['webTitle'],
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
                     'class' => 'navbar-inverse navbar-fixed-top',
@@ -76,7 +76,7 @@ AppAsset::register($this);
 
     <footer class="footer">
         <div class="container">
-            <p class="pull-left">&copy; 上海海湾土风舞社 <?= date('Y') ?></p>
+            <p class="pull-left">&copy; 海湾之家 <?= date('Y') ?></p>
             <!--p class="pull-right"><?= Yii::powered() ?></p-->
         </div>
     </footer>

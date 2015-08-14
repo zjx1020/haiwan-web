@@ -6,7 +6,7 @@ use yii\bootstrap\ActiveForm;
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $model app\models\LoginForm */
 
-$this->title = '上海海湾土风舞社-登录';
+$this->title = Yii::$app->params['webTitle'] . '-登录';
 $subtitle = '登录';
 $this->params['breadcrumbs'][] = $subtitle;
 ?>

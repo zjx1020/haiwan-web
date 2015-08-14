@@ -7,7 +7,7 @@ use yii\widgets\ActiveForm;
 /* @var $model app\models\UserForm */
 /* @var $form ActiveForm */
 
-$this->title = "上海海湾土风舞社-修改个人资料";
+$this->title = Yii::$app->params['webTitle'] . "-修改个人资料";
 $this->params['breadcrumbs'][] = ['label' => '个人资料', 'url' => ['site/profile']];
 $this->params['breadcrumbs'][] = '修改个人资料';
 ?>

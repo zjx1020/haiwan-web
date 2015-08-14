@@ -1,6 +1,6 @@
 <?php
 /* @var $this yii\web\View */
-$this->title = '上海海湾土风舞社';
+$this->title = Yii::$app->params['webTitle'];
 #$this->registerJsFile(yii\helpers\Url::base() . '/js/ztree.js', ['depends'=>['yii\web\JqueryAsset']]);
 ?>
 <div class="site-index">
@@ -17,7 +17,8 @@ $this->title = '上海海湾土风舞社';
         </p>
         <h4>【活动地点】</h4>
         <p>
-        上海普陀区长寿路亚新生活广场3楼301室<br>
+        长宁区武夷路777号（近中山西路）国际体操中心旁的星之健身2F。<br>
+        小贴士：一定要走体质检测那边的楼梯才能找到。地铁：3号线4号线，中山公园站3号出口，过马路(轨道和公交总队)朝凯旋路南面走，经龙之梦雅仕大楼到安化路朝西走，先进一小区铁门走到左手面再来有一小铁门（体操中心后门）进去，靠左边走到星之健身；另2号线中山公园站的8号出口亦可。搭3号4号线的延安西站1号出口从正门进亦可。<br>
         </p>
         <h4>【活动时间】</h4>
         <p>

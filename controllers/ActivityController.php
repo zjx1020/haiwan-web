@@ -10,6 +10,7 @@ use app\models\ActivityRecord;
 use app\models\User;
 use app\models\Dance;
 use app\models\DanceRecord;
+use app\models\PayRecord;
 use yii\log\Logger;
 
 class ActivityController extends Controller
@@ -241,6 +242,14 @@ class ActivityController extends Controller
         }
         $activity = Activity::findOne($id);
         $activity->kind = 1;
+
+        $payRecord = new PayRecord;
+        $payRecord->payer = '海湾';
+        $payRecord->time = date("Y-m-d H:i:s", time());
+        $payRecord->money = $activity->cost;
+        $payRecord->owner = '例会场地老板';
+        $payRecord->description = '例会场地费';
+        
         $transaction = Yii::$app->db->beginTransaction();
         try {
             if ($activity->update() === false) {
@@ -315,7 +324,14 @@ class ActivityController extends Controller
                     return json_encode(array('succ' => false, 'msg' => $this->sysErr));
                 }
             }
+
+            if ($payRecord->insert() === false) {
+                $transaction->rollBack();
+                Yii::error("insert to db failed");
+                return json_encode(array('succ' => false, 'msg' => $this->sysErr));
+            }
         } catch (Exception $e) {
+            $transaction->rollBack();
             Yii::error("db exception: " . $e->getMessage());
             return json_encode(array('succ' => false, 'msg' => $this->sysErr));
         }
@@ -338,12 +354,20 @@ class ActivityController extends Controller
         $activity = Activity::find()->where("name=\"" . $model->name . "\" and time=\"" . $model->time . "\"")->one();
         if ($activity != null) {
             return json_encode(array('succ' => false, 'exist' => true, 'msg' => '活动已存在'));
-        }
+        } 
 
-        if ($model->createActivity()) {
-            return json_encode(array('succ' => true));
-        } else {
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            if ($model->createActivity() === false) {
+                $transaction->rollBack();
+                return json_encode(array('succ' => false, 'msg' => $this->sysErr));
+            }
+        } catch (Exception $e) {
+            $transaction->rollBack();
+            Yii::error("insert to db failed");
             return json_encode(array('succ' => false, 'msg' => $this->sysErr));
         }
+        $transaction->commit();
+        return json_encode(array('succ' => true));
     }
 }

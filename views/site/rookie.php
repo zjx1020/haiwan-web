@@ -1,6 +1,6 @@
 <?php
 /* @var $this yii\web\View */
-$this->title = '上海海湾土风舞社-新人专区';
+$this->title = Yii::$app->params['webTitle'] . '-新人专区';
 $subtitle = '新人专区';
 $this->params['breadcrumbs'][] = $subtitle;
 #$this->registerJsFile(yii\helpers\Url::base() . '/js/ztree.js', ['depends'=>['yii\web\JqueryAsset']]);

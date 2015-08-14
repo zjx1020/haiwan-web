@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "pay_record".
  *
  * @property integer $id
- * @property string $account
+ * @property string $payer
  * @property string $time
  * @property integer $money
  * @property string $owner
@@ -30,11 +30,11 @@ class PayRecord extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['account', 'time', 'money', 'owner', 'description'], 'required'],
+            [['payer', 'time', 'money', 'owner', 'description'], 'required'],
             [['time'], 'safe'],
             [['money'], 'integer'],
             [['description'], 'string'],
-            [['account', 'owner'], 'string', 'max' => 30]
+            [['payer', 'owner'], 'string', 'max' => 30]
         ];
     }
 
@@ -45,7 +45,7 @@ class PayRecord extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'account' => 'Account',
+            'payer' => 'Payer',
             'time' => 'Time',
             'money' => 'Money',
             'owner' => 'Owner',
