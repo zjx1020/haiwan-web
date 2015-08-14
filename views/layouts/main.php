@@ -76,8 +76,8 @@ AppAsset::register($this);
 
     <footer class="footer">
         <div class="container">
-            <p class="pull-left">&copy; 海湾之家 <?= date('Y') ?></p>
-            <!--p class="pull-right"><?= Yii::powered() ?></p-->
+            <!--p class="pull-left">&copy; 海湾之家 <?= date('Y') ?></p-->
+            <p style="text-align:center">&copy; 海湾之家 <?= date('Y') ?> <a href="http://www.miitbeian.gov.cn">沪ICP备15037398</a></p>
         </div>
     </footer>
 
