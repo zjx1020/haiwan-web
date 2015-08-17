@@ -213,12 +213,12 @@ class ActivityController extends Controller
                     return json_encode(array('succ' => false, 'msg' => $this->sysErr));
                 }
             }
+            ActivityRecord::deleteAll("activity_id=$id");
             if ($activity->delete() === false) {
                 $transaction->rollBack();
                 Yii::error("update db failed");
                 return json_encode(array('succ' => false, 'msg' => $this->sysErr));
             }
-            ActivityRecord::deleteAll("activity_id=$id");
         } catch (Exception $e) {
             $transaction->rollBack();
             Yii::error("db exception: " . $e->getMessage());

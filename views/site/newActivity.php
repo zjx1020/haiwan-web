@@ -38,7 +38,7 @@ $this->registerJsFile(Url::base() . '/js/activity.js', ['depends' => ['yii\web\J
 
     <div style="text-align:center" id="activityBtns">
         <button class="btn btn-primary join">报名</button>
-        <button class="btn btn-primary finish">报名结束</button>
+        <button class="btn btn-primary finish">报名结束开始排舞</button>
         <button class="btn btn-primary cancel">取消活动</button>
     </div>
 </div>

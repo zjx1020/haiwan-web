@@ -228,6 +228,7 @@ class SiteController extends Controller
     {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
+            //return Yii::$app->getResponse();
         }
         $model = new ActivityForm();
         $model->time = date("Y-m-d", strtotime("+0 week Saturday"));

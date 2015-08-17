@@ -21,8 +21,8 @@ $this->params['breadcrumbs'][] = $subtitle;
         ],
     ]); ?>
 
-        <?= $form->field($model, 'account')->textInput(['maxlength' => 10]) ?>
-        <?= $form->field($model, 'name')->textInput(['maxlength' => 10]) ?>
+        <?= $form->field($model, 'account')->textInput(['maxlength' => 20]) ?>
+        <?= $form->field($model, 'name')->textInput(['maxlength' => 20]) ?>
         <?= $form->field($model, 'password')->passwordInput(['maxlength' => 20]) ?>
         <?= $form->field($model, 'passwordVerify')->passwordInput(['maxlength' => 20]) ?>
         <?= $form->field($model, 'sex')->radioList([0 => '男', 1 => '女']) ?>

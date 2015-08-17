@@ -35,6 +35,11 @@ $(".create").click(function() {
       $("#activityform-cost").attr('style', 'border-color:red');
       $("#activityform-cost").attr('placeholder', '活动还有倒贴？');
       has_error = true;
+    } else if (isNaN(cost)) {
+      $("#activityform-cost").val('');
+      $("#activityform-cost").attr('style', 'border-color:red');
+      $("#activityform-cost").attr('placeholder', '请输入整数');
+      has_error = true;
     } else {
       $("#activityform-cost").removeAttr('style');
     }

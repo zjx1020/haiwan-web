@@ -167,7 +167,7 @@ class UserForm extends Model
     /**
      *  functions for scenarios modifyProfile
      */
-    public function validateNewNameExist() {
+    public function validateNewNameExist($attribute, $params) {
         if (!$this->hasErrors()) {
             $user = User::findOne(['name' => $this->name]);
             if ($user != null && $user->account != Yii::$app->user->identity->account) {

@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $subtitle;
         ],
     ]); ?>
 
-    <?= $form->field($model, 'account')->textInput(['maxlength' => 10, 'placeholder' => '账号']) ?>
+    <?= $form->field($model, 'account')->textInput(['maxlength' => 20, 'placeholder' => '账号']) ?>
 
     <?= $form->field($model, 'password')->passwordInput(['maxlength' => 20, 'placeholder' => '请输入密码']) ?>
 
