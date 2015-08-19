@@ -9,9 +9,6 @@ function update(data) {
   var activityTable = document.getElementById("activityRecordTable");
   var recordPage = document.getElementById("recordPage");
   if (data.account == 'haiwan') {
-    if (body.hasChildNodes(activityTable)) {
-      body.removeChild(activityTable);
-    }
     if (data.record.length > 0) {
       for (var i = 0; i < data.record.length; ++i) {
         var record = data.record[i];
@@ -24,21 +21,7 @@ function update(data) {
         consumeTable.insertAdjacentElement('afterEnd', generatePage(data.recordCnt, "recordPage"));
       } 
     }
-    var div = document.createElement('div');
-    div.style.textAlign = "center";
-    var btn = document.createElement('button');
-    btn.className = "btn btn-primary addConsumeRecord";
-    btn.innerHTML = '新增收款记录';
-    div.appendChild(btn);
-    btn = document.createElement('button');
-    btn.className = "btn btn-primary addPayConsumeRecord";
-    btn.innerHTML = '新增付款记录';
-    div.appendChild(btn);
-    body.appendChild(div);
   } else {
-    if (body.hasChildNodes(consumeTable)) {
-      body.removeChild(consumeTable);
-    }
     if (data.record.length > 0) {
       for (var i = 0; i < data.record.length; ++i) {
         var record = data.record[i];

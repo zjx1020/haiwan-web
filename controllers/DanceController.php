@@ -386,7 +386,7 @@ class DanceController extends Controller
             $reviewDances[] = $dance->name;
         }
         $activityDances = $this->generateActivityDances($activityCnt - 1, $reviewDances);
-        unset($reviewDances);
+        $reviewDances = array();
         foreach ($dances as $dance) {
             $reviewDances[] = $dance->kind == 2 ? $dance->name . "*" : $dance->name;
         }

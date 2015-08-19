@@ -164,7 +164,7 @@ class SiteController extends Controller
             $user = User::find()->select('left_count')->where("account=\"$account\"")->one();
             $leftCount = $user->left_count;
         }
-        return $this->render('consumeRecord', ['leftCount' => $leftCount]);
+        return $this->render('consumeRecord', ['leftCount' => $leftCount, 'account' => $account]);
     }
 
     public function actionGetConsumeRecord() {
