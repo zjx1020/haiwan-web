@@ -179,7 +179,7 @@ class SiteController extends Controller
         if ($account != 'haiwan') {
             $recordCnt = ActivityRecord::find()->where("account=\"$account\"")->count();
             $sql = "select activity_record.time AS time,CONCAT(activity.time, ' ', activity.name) AS title,if(activity.cost>0,-1,0) as count from activity_record,activity where activity_record.account=\"$account\" and activity_record.activity_id=activity.id";
-            $sql .= " union all select time,\"充值活动次数\" as title,if(money>50,10,1) as count from pay_record where payer=\"$name\" and owner=\"海湾\" order by time desc limit $limit offset $offset";
+            $sql .= " union all select time,\"充值活动次数\" as title,if(money=35,1,ceil(money/30)) as count from pay_record where payer=\"$name\" and owner=\"海湾\" order by time desc limit $limit offset $offset";
             $connection = Yii::$app->db;
             $record = $connection->createCommand($sql)->queryAll();
         } else {
