@@ -13,6 +13,7 @@ use app\models\UploadForm;
 use yii\web\UploadedFile;
 use app\models\Activity;
 use app\models\ActivityForm;
+use app\models\Role;
 use yii\data\ActiveDataProvider;
 use yii\widgets\ListView;
 use yii\db\Query;
@@ -220,7 +221,14 @@ class SiteController extends Controller
             $model['users'] = implode(",", $userArr);
             return $this->render('newActivity', ['model' => $model]);
         } else {
-            return $this->render('noActivity');
+            $hasAuth = false;
+            if (!Yii::$app->user->isGuest) {
+                $role = Role::findOne(Yii::$app->user->identity->account);
+                if ($role != null && $role->role == 'admin') {
+                    $hasAuth = true;
+                }
+            }
+            return $this->render('noActivity', ['hasAuth' => $hasAuth]);
         }
     }
 
@@ -228,7 +236,6 @@ class SiteController extends Controller
     {
         if (Yii::$app->user->isGuest) {
             return $this->goHome();
-            //return Yii::$app->getResponse();
         }
         $model = new ActivityForm();
         $model->time = date("Y-m-d", strtotime("+0 week Saturday"));
@@ -238,14 +245,6 @@ class SiteController extends Controller
             $model->address = $activity->address;
             $model->cost = $activity->cost;
         }
-
-        /*
-        if ($model->load(Yii::$app->request->post())) {
-            if ($model->createActivity()) {
-                return $this->redirect(['site/new-activity']);
-            }
-        }
-        */
 
         return $this->render('createActivity', [
             'model' => $model,

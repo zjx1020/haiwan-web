@@ -11,6 +11,7 @@ use app\models\User;
 use app\models\Dance;
 use app\models\DanceRecord;
 use app\models\PayRecord;
+use app\models\Role;
 use yii\log\Logger;
 
 class ActivityController extends Controller
@@ -133,7 +134,7 @@ class ActivityController extends Controller
         $id = (integer) $_REQUEST['id'];
         $result = array();
         $result['canJoin'] = $this->canJoin($id);
-        $result['hasAuth'] = $this->hasAuth($id);
+        $result['hasAuth'] = $this->hasAuth();
         return json_encode($result);
     }
 
@@ -144,10 +145,10 @@ class ActivityController extends Controller
         return true;
     }
 
-    private function hasAuth($id) {
-        $activity = Activity::findOne($id);
+    private function hasAuth() {
         if (!Yii::$app->user->isGuest) {
-            if (Yii::$app->user->identity->name == $activity->creator || Yii::$app->user->identity->account == 'haiwan') {
+            $role = Role::findOne(Yii::$app->user->identity->account);
+            if ($role != null && $role->role == 'admin') {
                 return true;
             }
         }
@@ -196,7 +197,7 @@ class ActivityController extends Controller
 
     public function actionCancel() {
         $id = (integer) $_REQUEST['id'];
-        if ($this->hasAuth($id) === false) {
+        if ($this->hasAuth() === false) {
             return json_encode(array('succ' => false, 'msg' => '无权限取消'));
         }
         $activity = Activity::findOne($id);
@@ -233,22 +234,24 @@ class ActivityController extends Controller
         $teachDancesStr = $_REQUEST['teachDances'];
         $reviewDancesStr = $_REQUEST['reviewDances'];
         $activityDancesStr = $_REQUEST['activityDances'];
-        if ($this->hasAuth($id) === false) {
+        if ($this->hasAuth() === false) {
             return json_encode(array('succ' => false, 'msg' => '无权限操作'));
         }
         $userCount = ActivityRecord::find()->where("activity_id=$id")->count();
-        if ($userCount < 0) { //TODO
+        if ($userCount < 8) {
             return json_encode(array('succ' => false, 'msg' => "活动人数少于8人，无法创建活动"));
         }
         $activity = Activity::findOne($id);
         $activity->kind = 1;
 
+        /*
         $payRecord = new PayRecord;
         $payRecord->payer = '海湾';
         $payRecord->time = date("Y-m-d H:i:s", time());
         $payRecord->money = $activity->cost;
         $payRecord->owner = '例会场地老板';
         $payRecord->description = '例会场地费';
+        */
         
         $transaction = Yii::$app->db->beginTransaction();
         try {
@@ -324,12 +327,13 @@ class ActivityController extends Controller
                     return json_encode(array('succ' => false, 'msg' => $this->sysErr));
                 }
             }
-
+            /*
             if ($payRecord->insert() === false) {
                 $transaction->rollBack();
                 Yii::error("insert to db failed");
                 return json_encode(array('succ' => false, 'msg' => $this->sysErr));
             }
+            */
         } catch (Exception $e) {
             $transaction->rollBack();
             Yii::error("db exception: " . $e->getMessage());

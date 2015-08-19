@@ -11,6 +11,7 @@ use app\models\DanceRecord;
 use app\models\DanceLeader;
 use app\models\User;
 use app\models\Country;
+use app\models\Role;
 use yii\web\UploadedFile;
 use yii\log\Logger;
 
@@ -39,10 +40,13 @@ class DanceController extends Controller
             $childNodes[] = array('name' => $country, 'children' => $childs);
         }
         $nodes = array('name' => '舞码大全', 'open' => true, 'children' => $childNodes);
-        if (Yii::$app->user->isGuest || Yii::$app->user->identity->account != 'haiwan') {
-            $hasAuth = false;
-        } else {
-            $hasAuth = true;
+
+        $hasAuth = false;
+        if (!Yii::$app->user->isGuest) {
+            $role = Role::findOne(Yii::$app->user->identity->account);
+            if ($role != null && $role->role == 'admin') {
+                $hasAuth = true;
+            }
         }
 
         return json_encode(array('ztree' => $nodes, 'hasAuth' => $hasAuth));

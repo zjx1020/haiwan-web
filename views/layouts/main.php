@@ -45,7 +45,7 @@ AppAsset::register($this);
                     ['label' => '活动', 'items' => [
                             ['label' => '最新活动', 'url' => ['/site/new-activity']],
                             ['label' => '历史活动', 'url' => ['/site/activity']],
-                            ['label' => '创建活动', 'url' => ['/site/create-activity']],
+                            //['label' => '创建活动', 'url' => ['/site/create-activity']],
                         ]
                     ],
                     ['label' => '舞码大全', 'url' => ['/site/dances']],

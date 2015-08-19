@@ -24,6 +24,17 @@ function update(data) {
         consumeTable.insertAdjacentElement('afterEnd', generatePage(data.recordCnt, "recordPage"));
       } 
     }
+    var div = document.createElement('div');
+    div.style.textAlign = "center";
+    var btn = document.createElement('button');
+    btn.className = "btn btn-primary addConsumeRecord";
+    btn.innerHTML = '新增收款记录';
+    div.appendChild(btn);
+    btn = document.createElement('button');
+    btn.className = "btn btn-primary addPayConsumeRecord";
+    btn.innerHTML = '新增付款记录';
+    div.appendChild(btn);
+    body.appendChild(div);
   } else {
     if (body.hasChildNodes(consumeTable)) {
       body.removeChild(consumeTable);
@@ -186,3 +197,19 @@ function clickPage(page) {
     update(data);
   }, 'json');
 }
+
+$(".addConsumeRecord").click(function() {
+  $(".consumeRecordModal").modal();
+});
+
+$(".consumeRecordModal .confirm").click(function() {
+  $(".consumeRecordModal").modal('hide');
+});
+
+$(".addPayConsumeRecord").click(function() {
+  $(".payConsumeRecordModal").modal();
+});
+
+$(".payConsumeRecordModal .confirm").click(function() {
+  $(".payConsumeRecordModal").modal('hide');
+});

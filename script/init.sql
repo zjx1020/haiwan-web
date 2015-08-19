@@ -75,3 +75,10 @@ create table if not exists country (
     name varchar(128) not null,
     primary key(name)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+create table if not exists role (
+    account varchar(30) not null,
+    role varchar(30) not null,
+    primary key(account),
+    foreign key(account) references user(account)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
