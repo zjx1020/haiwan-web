@@ -217,6 +217,13 @@ class SiteController extends Controller
     {
         $activity = Activity::find()->where("kind=0")->one();
         $model = array();
+        $hasAuth = false;
+        if (!Yii::$app->user->isGuest) {
+            $role = Role::findOne(Yii::$app->user->identity->account);
+            if ($role != null && $role->role == 'admin') {
+                $hasAuth = true;
+            }
+        }
         if ($activity != null) {
             $model['id'] = $activity->id;
             $model['title'] = substr($activity->time, 5) . " " . $activity->name;
@@ -229,15 +236,12 @@ class SiteController extends Controller
                 $userArr[] = $user->name;
             }
             $model['users'] = implode(",", $userArr);
-            return $this->render('newActivity', ['model' => $model]);
-        } else {
-            $hasAuth = false;
-            if (!Yii::$app->user->isGuest) {
-                $role = Role::findOne(Yii::$app->user->identity->account);
-                if ($role != null && $role->role == 'admin') {
-                    $hasAuth = true;
-                }
+            $canJoin = true;
+            if (Yii::$app->user->isGuest || ActivityRecord::find()->where("account=\"" . Yii::$app->user->identity->account . "\" and activity_id=$activity->id")->one() != null) {
+                $canJoin = false;
             }
+            return $this->render('newActivity', ['model' => $model, 'hasAuth' => $hasAuth, 'canJoin' => $canJoin]);
+        } else {
             return $this->render('noActivity', ['hasAuth' => $hasAuth]);
         }
     }

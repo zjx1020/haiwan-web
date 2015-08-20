@@ -37,8 +37,13 @@ $this->registerJsFile(Url::base() . '/js/activity.js', ['depends' => ['yii\web\J
     </table>
 
     <div style="text-align:center" id="activityBtns">
+        <?php if ($canJoin) { ?>
         <button class="btn btn-primary join">报名</button>
+        <?php }
+        if ($hasAuth) {
+        ?>
         <button class="btn btn-primary finish">报名结束开始排舞</button>
         <button class="btn btn-primary cancel">取消活动</button>
+        <?php } ?>
     </div>
 </div>
