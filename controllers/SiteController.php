@@ -156,9 +156,8 @@ class SiteController extends Controller
     public function actionConsumeRecord() {
         $account = Yii::$app->user->identity->account;
         if ($account == 'haiwan') {
-            $name = Yii::$app->user->identity->name;
-            $income = PayRecord::find()->where("owner=\"$name\"")->sum('money');
-            $pay = PayRecord::find()->where("payer=\"$name\"")->sum('money');
+            $income = PayRecord::find()->where("owner=\"$account\"")->sum('money');
+            $pay = PayRecord::find()->where("payer=\"$account\"")->sum('money');
             $leftCount = $income - $pay;
         } else {
             $user = User::find()->select('left_count')->where("account=\"$account\"")->one();
@@ -179,20 +178,31 @@ class SiteController extends Controller
         if ($account != 'haiwan') {
             $recordCnt = ActivityRecord::find()->where("account=\"$account\"")->count();
             $sql = "select activity_record.time AS time,CONCAT(activity.time, ' ', activity.name) AS title,if(activity.cost>0,-1,0) as count from activity_record,activity where activity_record.account=\"$account\" and activity_record.activity_id=activity.id";
-            $sql .= " union all select time,\"充值活动次数\" as title,if(money=35,1,ceil(money/30)) as count from pay_record where payer=\"$name\" and owner=\"海湾\" order by time desc limit $limit offset $offset";
+            $sql .= " union all select time,\"充值活动次数\" as title,if(money=35,1,ceil(money/30)) as count from pay_record where payer=\"$account\" and owner=\"haiwan\" order by time desc limit $limit offset $offset";
             $connection = Yii::$app->db;
             $record = $connection->createCommand($sql)->queryAll();
         } else {
             $query = new Query;
-            $record = $query->select(['time', 'payer', 'owner', 'money', 'description'])->from('pay_record')->where("payer=\"$name\" or owner=\"$name\"")->limit($limit)->offset($offset)->all();
-            for ($i = 0; $i < count($record); $i++) {
-                if ($record[$i]['payer'] == $name) {
+            $record = $query->select(['time', 'payer', 'owner', 'money', 'description'])->from('pay_record')->where("payer=\"$account\" or owner=\"$account\"")->limit($limit)->offset($offset)->all();
+            for ($i = 0; $i < count($record); $i++) { 
+                if ($record[$i]['payer'] == $account) {
+                    $relation = $record[$i]['owner'];
+                    $user = User::findOne($relation);
+                    if ($user != null) {
+                        $relation = $user->name;
+                    }
                     $record[$i]['money'] *= -1;
+                    $record[$i]['owner'] = $relation;
                 } else {
-                    $record[$i]['owner'] = $record[$i]['payer'];
+                    $relation = $record[$i]['payer'];
+                    $user = User::findOne($relation);
+                    if ($user != null) {
+                        $relation = $user->name;
+                    }
+                    $record[$i]['owner'] = $relation;
                 }
             }
-            $recordCnt = PayRecord::find()->where("payer=\"$name\" or owner=\"$name\"")->count();
+            $recordCnt = PayRecord::find()->where("payer=\"$account\" or owner=\"$account\"")->count();
         }
 
         return json_encode(array('account' => $account, 'recordCnt' => $recordCnt, 'record' => $record));
