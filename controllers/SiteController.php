@@ -230,12 +230,12 @@ class SiteController extends Controller
             $model['address'] = $activity->address;
             $model['description'] = $activity->description;
             $model['cost'] = $activity->cost;
-            $users = User::findBySql("select name from user where account in (select account from activity_record where activity_id=$activity->id)")->all();
+            $users = User::findBySql("select name from user join activity_record on user.account=activity_record.account where activity_id=$activity->id order by activity_record.time")->all();
             $userArr = array();
             foreach ($users as $user) {
                 $userArr[] = $user->name;
             }
-            $model['users'] = implode(",", $userArr);
+            $model['users'] = implode("，", $userArr);
             $canJoin = true;
             if (Yii::$app->user->isGuest || ActivityRecord::find()->where("account=\"" . Yii::$app->user->identity->account . "\" and activity_id=$activity->id")->one() != null) {
                 $canJoin = false;
