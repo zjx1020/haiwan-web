@@ -183,7 +183,7 @@ class SiteController extends Controller
             $record = $connection->createCommand($sql)->queryAll();
         } else {
             $query = new Query;
-            $record = $query->select(['time', 'payer', 'owner', 'money', 'description'])->from('pay_record')->where("payer=\"$account\" or owner=\"$account\"")->limit($limit)->offset($offset)->all();
+            $record = $query->select(['time', 'payer', 'owner', 'money', 'description'])->from('pay_record')->where("payer=\"$account\" or owner=\"$account\"")->orderBy('time DESC')->limit($limit)->offset($offset)->all();
             for ($i = 0; $i < count($record); $i++) { 
                 if ($record[$i]['payer'] == $account) {
                     $relation = $record[$i]['owner'];
