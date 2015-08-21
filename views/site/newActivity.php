@@ -46,4 +46,13 @@ $this->registerJsFile(Url::base() . '/js/activity.js', ['depends' => ['yii\web\J
         <button class="btn btn-primary cancel">取消活动</button>
         <?php } ?>
     </div>
+    <?php
+    \yii\bootstrap\Modal::begin([
+        'header' => '<h2>取消活动</h2>',
+        'options' => ["class" => "confirmModal"],
+        'footer' => '<button class="confirm btn btn-primary">确认</button><button type="button" class="btn btn-default" data-dismiss="modal">取消</button>',
+    ]);
+    echo '<p class="content">确定要取消活动？</p>';
+    \yii\bootstrap\Modal::end();
+    ?>
 </div>

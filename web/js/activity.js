@@ -37,11 +37,16 @@ $(".join").click(function() {
 });
 
 $(".cancel").click(function() {
+  $(".confirmModal").modal();
+});
+
+$(".confirmModal .confirm").click(function() {
   $.post(BASEURL + 'activity/cancel&id=' + id, function(data) {
     if (data.succ == false) {
       alert(data.msg);
     } else {
       alert(data.msg);
+      $(".confirmModal").modal('hide');
       window.location.href = window.location.href;
     }
   }, 'json');
