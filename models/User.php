@@ -16,6 +16,7 @@ use Yii;
  * @property string $birth
  * @property string $join_date
  * @property integer $left_count
+ * @property string $weixin
  */
 class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 {
@@ -30,12 +31,13 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function rules()
     {
         return [
-            [['account', 'name', 'password', 'sex', 'phone', 'email', 'birth', 'join_date', 'left_count'], 'required'],
+            [['account', 'name', 'password', 'sex', 'phone', 'email', 'birth', 'join_date', 'left_count', 'weixin'], 'required'],
             [['sex', 'left_count'], 'integer'],
             [['birth', 'join_date'], 'safe'],
             [['account', 'name'], 'string', 'max' => 30],
             [['password', 'phone'], 'string', 'max' => 20],
-            [['email'], 'string', 'max' => 128]
+            [['email'], 'string', 'max' => 128],
+            [['weixin'], 'string', 'max' => 60],
         ];
     }
 
@@ -51,6 +53,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'birth' => 'Birth',
             'join_date' => 'Join Date',
             'left_count' => 'Left Count',
+            'weixin' => 'Weixin',
         ];
     } 
 

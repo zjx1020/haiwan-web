@@ -24,7 +24,7 @@ $this->registerJsFile(Url::base() . '/js/dance_ztree.js', ['depends'=>['diselop\
     <div class="col-lg-9" id="danceDetail">
         <h1 class="danceTitle" style="text-align:center">舞码大全</h1>
         <p class="danceDescription" style="display:none"></p>
-        <table class="danceTable" style="display:none">
+        <table class="danceTable" id="danceTable" style="display:none">
             <tr>
                 <td class="col-lg-1"></td>
                 <th class="col-lg-2">难度等级：</th>
@@ -37,16 +37,6 @@ $this->registerJsFile(Url::base() . '/js/dance_ztree.js', ['depends'=>['diselop\
                 <th class="col-lg-2">舞蹈简介：</th>
                 <td class="description" colspan=3></td>
             </tr>
-            <!--tr>
-                <td class="col-lg-1"></td>
-                <th class="col-lg-2">领舞者：</th>
-                <td class="leaders" colspan=3></td>
-            </tr>
-            <tr class="leadDanceTr" style="display:none">
-                <td class="col-lg-1"></td>
-                <td class="col-lg-2"></td>
-                <td class="btn btn-primary leadDanceBtn">我能领舞</td>
-            <tr-->
             <tr>
                 <td class="col-lg-1"></td>
                 <th class="col-lg-2">教学记录：</th>
@@ -61,14 +51,6 @@ $this->registerJsFile(Url::base() . '/js/dance_ztree.js', ['depends'=>['diselop\
         </table>
     </div>
     <?php
-    \yii\bootstrap\Modal::begin([
-        //'header' => '<h2></h2>',
-        'id' => "leadDanceConfirmModal",
-        'footer' => '<button class="confirm btn btn-primary">OK</button>',
-    ]);
-    echo '<p class="leadDanceConfirmModalContent"></p>';
-    \yii\bootstrap\Modal::end();
-
     \yii\bootstrap\Modal::begin([
         'header' => '<h2>新增舞码</h2>',
         'options' => ["class" => "addDanceModal"],

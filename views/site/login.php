@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -9,6 +10,7 @@ use yii\bootstrap\ActiveForm;
 $this->title = Yii::$app->params['webTitle'] . '-登录';
 $subtitle = '登录';
 $this->params['breadcrumbs'][] = $subtitle;
+$this->registerJsFile(Url::base() . '/js/login.js', ['depends' => ['yii\web\JqueryAsset']]);
 ?>
 <div class="site-login">
     <?php $form = ActiveForm::begin([
@@ -34,7 +36,7 @@ $this->params['breadcrumbs'][] = $subtitle;
         </div>
         <div class="col-lg-offset-1">
             <div class="col-lg-2">
-                <?= Html::a('忘记密码？') ?>
+                <?= Html::a('忘记密码？', null, ['class' => 'forgetPassword']) ?>
             </div>
             <div class="col-lg-1">
                 <?= Html::a('注册', ['/site/register']) ?>

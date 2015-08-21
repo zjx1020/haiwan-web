@@ -16,11 +16,13 @@ class UserForm extends Model
     public $sex;
     public $phone;
     public $email;
+    public $weixin;
     public $birth;
     public $join_date;
-    //public $leader_dance_list;
     public $left_count;
     public $rememberMe = true;
+
+    private $sexArr = array('男', '女', '未知');
 
 
     public function attributeLabels()
@@ -36,9 +38,9 @@ class UserForm extends Model
             'email' => '邮箱',
             'birth' => '生日',
             'join_date' => '首次加入海湾的时间',
-            //'leader_dance_list' => '可领跳舞码',
             'left_count' => '剩余活动次数',
             'rememberMe' => '记住我',
+            'weixin' => '微信号',
         ];
     }
 
@@ -56,7 +58,7 @@ class UserForm extends Model
             ['password', 'compare', 'compareAttribute' => 'passwordVerify', 'on' => 'register'],
             ['email', 'email', 'on' => 'register'],
             // rules for scenario modifyProfile
-            [['name', 'sex', 'phone', 'email', 'birth'], 'required', 'on' => 'profile'],
+            [['name', 'sex', 'phone', 'email', 'weixin', 'birth'], 'required', 'on' => 'profile'],
             ['name', 'validateNewNameExist', 'on' => 'modifyProfile'],
             // rules for scenario modifyPassword
             [['password', 'newPassword', 'passwordVerify'], 'required', 'on' => 'modifyPassword'],
@@ -69,8 +71,8 @@ class UserForm extends Model
         return [
             'login' => ['account', 'password', 'rememberMe'],
             'register' => ['account', 'name', 'password', 'passwordVerify', 'sex', 'phone', 'email', 'birth'],
-            'profile' => ['name', 'sex', 'phone', 'email', 'birth', 'join_date', 'leader_dance_list', 'left_count'],
-            'modifyProfile' => ['name', 'sex', 'phone', 'email', 'birth', 'join_date'],
+            'profile' => ['name', 'sex', 'phone', 'email', 'weixin', 'birth', 'join_date', 'left_count'],
+            'modifyProfile' => ['name', 'sex', 'phone', 'email', 'weixin', 'birth', 'join_date'],
             'modifyPassword' => ['password', 'newPassword', 'passwordVerify'],
         ];
     }
@@ -126,6 +128,7 @@ class UserForm extends Model
         $user->birth = $this->birth;
         $user->join_date = "0000-00-00";
         $user->left_count = 0;
+        $user->weixin = '无';
         try {
             $result = $user->insert();
             if ($result === false) {
@@ -143,13 +146,17 @@ class UserForm extends Model
         $user = User::findOne($account);
         if ($user) {
             $this->name = $user->name;
+            /*
             if ($account == 'haiwan') {
                 $this->sex = '未知';
             } else {
                 $this->sex = $user->sex == 0 ? '男' : '女';
             }
+            */
+            $this->sex = $this->sexArr[$user->sex];
             $this->phone = $user->phone;
             $this->email = $user->email;
+            $this->weixin = $user->weixin;
             $this->birth = $user->birth;
             $this->join_date = $user->join_date == "0000-00-00" ? "未知" : $user->join_date;
             //$this->leader_dance_list = '还没有可以领跳的舞哦';
@@ -184,6 +191,7 @@ class UserForm extends Model
             $this->sex = $user->sex;
             $this->phone = $user->phone;
             $this->email = $user->email;
+            $this->weixin = $user->weixin;
             $this->birth = $user->birth;
             $this->join_date = $user->join_date == "0000-00-00" ? "" : $user->join_date;
         } else {
@@ -199,6 +207,7 @@ class UserForm extends Model
             $user->sex = $this->sex;
             $user->phone = $this->phone;
             $user->email = $this->email;
+            $user->weixin = $this->weixin;
             $user->birth = $this->birth;
             $user->join_date = $this->join_date == "" ? "0000-00-00" : $this->join_date;
             try {

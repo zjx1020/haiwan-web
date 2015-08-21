@@ -57,25 +57,7 @@ class DanceController extends Controller
         $name = $params["name"];
         $dance = Dance::find()->select(['dance_level', 'description', 'dance_count'])->where("name=\"$name\"")->asArray()->One();
         $dance['dance_level'] = self::$DANCE_LEVEL[$dance['dance_level']];
-        $danceLeaders = User::findBySql("select name from user where account in (select account from dance_leader where dance_name=\"$name\")")->all();
-        $leaderCnt = count($danceLeaders);
-        if ($leaderCnt == 0) {
-            $dance["leaders"] = "海湾竟然没人会跳这首舞。。。";
-        } else {
-            $leaders = array();
-            foreach ($danceLeaders as $danceLeader) {
-                $leaders[] = $danceLeader->name;
-            }
-            $dance["leaders"] = implode("，", $leaders);
-        }
-        $dance['isGuest'] = Yii::$app->user->isGuest ? true : false;
-        if (!$dance['isGuest']) {
-            if ($leaderCnt != 0 && strpos($dance["leaders"], Yii::$app->user->identity->name) !== false) {
-                $dance['isLeader'] = true;
-            } else {
-                $dance['isLeader'] = false;
-            }
-        }
+        
         return json_encode($dance);
     }
 
@@ -134,6 +116,25 @@ class DanceController extends Controller
             }
         } catch (yii\db\IntegrityException $e) {
             return json_encode(array('succ' => false, 'exist' => true));
+        } catch (Exception $e) {
+            Yii::error("db exception: " . $e->getMessage());
+            return json_encode(array('succ' => false));
+        }
+        return json_encode(array('succ' => true));
+    }
+
+    public function actionUpdateDance() {
+        $dance = Dance::findOne($_REQUEST['oldName']);
+        $dance->name = $_REQUEST['name'];
+        $dance->country = $_REQUEST['country'];
+        $dance->kind = $_REQUEST['kind'];
+        $dance->dance_level = $_REQUEST['dance_level'];
+        $dance->description = $_REQUEST['description'];
+        try {
+            if ($dance->update() === false) {
+                Yii::error("update db failed");
+                return json_encode(array('succ' => false));
+            }
         } catch (Exception $e) {
             Yii::error("db exception: " . $e->getMessage());
             return json_encode(array('succ' => false));
@@ -398,6 +399,13 @@ class DanceController extends Controller
         $query = new Query;
         $countries = $query->select('name')->from('country')->orderBy("convert(name using gbk)")->all();
         return json_encode($countries);
+    }
+
+    public function actionGetDanceInfo() {
+        $name = $_REQUEST['name'];
+        $dance = Dance::find()->select(['name', 'country', 'kind', 'dance_level', 'description'])->where("name=\"$name\"")->asArray()->One();
+
+        return json_encode($dance);
     }
 
     private static $DANCE_LEVEL = array(

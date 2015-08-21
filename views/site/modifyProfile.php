@@ -22,9 +22,10 @@ $this->params['breadcrumbs'][] = '修改个人资料';
     ]); ?>
 
         <?= $form->field($model, 'name')->textInput(['maxlength' => 20]) ?>
-        <?= $form->field($model, 'sex')->radioList([0 => '男', 1 => '女']) ?>
+        <?= $form->field($model, 'sex')->radioList([0 => '男', 1 => '女', 2 => '未知']) ?>
         <?= $form->field($model, 'phone') ?>
         <?= $form->field($model, 'email') ?>
+        <?= $form->field($model, 'weixin') ?>
         <?= $form->field($model, 'birth')->widget(\yii\jui\DatePicker::className(), [
             'options' => [
                 'class' => 'form-control',

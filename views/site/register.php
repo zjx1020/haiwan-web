@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $subtitle;
         <?= $form->field($model, 'name')->textInput(['maxlength' => 20]) ?>
         <?= $form->field($model, 'password')->passwordInput(['maxlength' => 20]) ?>
         <?= $form->field($model, 'passwordVerify')->passwordInput(['maxlength' => 20]) ?>
-        <?= $form->field($model, 'sex')->radioList([0 => '男', 1 => '女']) ?>
+        <?= $form->field($model, 'sex')->radioList([0 => '男', 1 => '女', 2 => '未知']) ?>
         <?= $form->field($model, 'phone') ?>
         <?= $form->field($model, 'email') ?>
         <?= $form->field($model, 'birth')->widget(\yii\jui\DatePicker::className(), [

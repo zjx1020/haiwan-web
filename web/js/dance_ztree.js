@@ -1,5 +1,10 @@
 var name = null;
 var node = null;
+var danceDetail = null;
+var modifyDiv = null;
+var hasAuth = false;
+var isAdd = 1;
+var oldName = null;
 function onClick(event, treeId, treeNode) {
   node = treeNode;
   name = treeNode.name.replace("*", "");
@@ -11,11 +16,6 @@ function onClick(event, treeId, treeNode) {
           $(".danceTable td." + key).text(val);
           $(".danceTable").show();
         });
-        if (data.isGuest || data.isLeader) {
-          $(".leadDanceTr").hide();
-        } else {
-          $(".leadDanceTr").show();
-        }
         $.post(BASEURL + 'dance/display-teach-record&name=' + name, function(data) {
           if (data.length == 0) {
             $(".teachRecordsContent").html("暂无");
@@ -39,8 +39,14 @@ function onClick(event, treeId, treeNode) {
             $("#teachRecords").show();
           }
         }, 'json');
-    }, 'json');
+    }, 'json'); 
+    if (hasAuth && danceDetail.lastChild != modifyDiv) {
+      danceDetail.appendChild(modifyDiv);
+    }
   } else {
+    if (danceDetail.lastChild == modifyDiv) {
+      danceDetail.removechild(modifyDiv);
+    }
     if (treeNode.level == 0) {
       $(".danceTitle").text(treeNode.name).text("舞码大全");
       $.get(BASEURL + 'dance/display-all-dance', function(data) {
@@ -59,19 +65,6 @@ function onClick(event, treeId, treeNode) {
   }
 }
 
-$(".leadDanceBtn").click(function() { 
-  $.post(BASEURL + 'dance/add-dance-leader&name=' + name, function(data) {
-    $("#leadDanceConfirmModal p.content").text(data.msg);
-    $("#leadDanceConfirmModal").modal();
-  }, 'json');
-});
-
-$("#leadDanceConfirmModal .confirm").click(function() {
-  $("#leadDanceConfirmModal").modal('hide');
-  ztree.selectNode(node);
-  ztree.setting.callback.onClick(null, ztree.setting.treeId, node);
-});
-
 var setting = {
   data: {
     simpleData: {
@@ -88,11 +81,20 @@ var ztree;
 $.get(BASEURL + 'dance/generate-dance-tree', function(data) {
   zNodes = data.ztree;
   ztree = $.fn.zTree.init($("#danceTree"), setting, zNodes);
-  if (data.hasAuth == false) {
+  hasAuth = data.hasAuth
+  if (hasAuth == false) {
     var leftPage = document.getElementById("leftPage");
     var button = document.getElementById("addDanceBtns");
     leftPage.removeChild(button);
   }
+  danceDetail = document.getElementById("danceDetail");
+  modifyDiv = document.createElement("div");
+  modifyDiv.style.textAlign = "center";
+  modifyDiv.setAttribute('onclick', 'clickModifyDance()');
+  var btn = document.createElement("button");
+  btn.className = "btn btn-primary modifyDance";
+  btn.innerHTML = '修改舞蹈资料';
+  modifyDiv.appendChild(btn);
 }, 'json');
 
 $.get(BASEURL + 'dance/display-all-dance', function(data) {
@@ -102,6 +104,7 @@ $.get(BASEURL + 'dance/display-all-dance', function(data) {
 }, 'json');
 
 $(".addDance").click(function() {
+  isAdd = 1;
   $(".addDanceModal").modal();
   $("#dance-name").removeAttr('style');
   $("#dance-name").attr('placeholder', '请输入舞名');
@@ -146,6 +149,16 @@ function getRadioValue(radios) {
   return val;
 }
 
+function setRadioValue(radios, value) {
+  for (var i = 0; i < radios.length; ++i) {
+    if (value == radios[i].value) {
+      radios[i].checked = true;
+    } else if (radios[i].checked == true) {
+      radios[i].checked = false;
+    }
+  }
+}
+
 $(".addDanceModal .confirm").click(function() {
   var name = $("#dance-name").val();
   if (name == '') {
@@ -159,22 +172,34 @@ $(".addDanceModal .confirm").click(function() {
   var kind = getRadioValue($("#dance-kind input"));
   var dance_level = getRadioValue($("#dance-level input"));
   var description = $("#dance-description").val();
-  $.post(BASEURL + 'dance/add-dance&name=' + name + '&country=' + country + '&kind=' + kind + '&dance_level=' + dance_level + '&description=' + description, function(data) {
-    if (data.succ == false) {
-      if (data.exist == true) {
-        $("#dance-name").attr('style', 'border-color:red');
-        $("#dance-name").val('');
-        $("#dance-name").attr('placeholder', '该舞已存在');
+  if (isAdd == 1) {
+    $.post(BASEURL + 'dance/add-dance&name=' + name + '&country=' + country + '&kind=' + kind + '&dance_level=' + dance_level + '&description=' + description, function(data) {
+      if (data.succ == false) {
+        if (data.exist == true) {
+          $("#dance-name").attr('style', 'border-color:red');
+          $("#dance-name").val('');
+          $("#dance-name").attr('placeholder', '该舞已存在');
+        } else {
+          $(".error").html("操作失败，系统异常，请联系管理员！");
+        }
       } else {
-        $(".error").html("操作失败，系统异常，请联系管理员！");
+        $(".addDanceModal").modal('hide');
+        window.location.href = window.location.href; 
       }
-    } else {
-      $(".addDanceModal").modal('hide');
-      window.location.href = window.location.href;
-    }
-  }, 'json');
+    }, 'json');
+  } else {
+    $.post(BASEURL + 'dance/update-dance&name=' + name + '&country=' + country + '&kind=' + kind + '&dance_level=' + dance_level + '&description=' + description + '&oldName=' + oldName, function(data) {
+      if (data.succ == false) {
+        $(".error").html("操作失败，系统异常，请联系管理员！");
+      } else {
+        $(".addDanceModal").modal('hide');
+        window.location.href = window.location.href; 
+      }
+    }, 'json');
+  } 
 });
 
+/*
 $(".addDances").click(function() {
   $(".addDancesModal").modal();
 });
@@ -191,3 +216,28 @@ $(".addDancesModal .confirm").click(function() {
   //$(".addDancesModal").modal('hide');
   //window.location.href = window.location.href;
 });
+*/
+
+function clickModifyDance() {
+  isAdd = 0;
+  oldName = name;
+  $(".addDanceModal").modal();
+  $.get(BASEURL + 'dance/get-dance-info&name=' + name, function(data) {
+    $("#dance-name").val(data.name);
+    setRadioValue($("#dance-kind input"), data.kind);
+    setRadioValue($("#dance-level input"), data.dance_level);
+    $("#dance-description").val(data.description);
+    $(".error").html("");
+    $.get(BASEURL + 'dance/get-all-country', function(countryData) {
+      var countries = countryData;
+      var select = document.getElementById("dance-country");
+      select.options.add(new Option("未知", "未知"));
+      for (var i = 0; i < countries.length; ++i) {
+        if (countries[i].name != '未知') {
+          select.options.add(new Option(countries[i].name, countries[i].name));
+        }
+      }
+      $("#dance-country").val(data.country);
+    }, 'json');
+  }, 'json');
+}

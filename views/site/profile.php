@@ -18,6 +18,7 @@ $this->params['breadcrumbs'][] = '个人资料';
             'sex',
             'phone',
             'email:email',
+            'weixin',
             'birth',
             'join_date',
             //'leader_dance_list:ntext',
