@@ -294,15 +294,29 @@ class SiteController extends Controller
             }
         }
         $succ = true;
+        $transaction = Yii::$app->db->beginTransaction();
         try {
             if ($payRecord->insert() === false) {
+                $transaction->rollBack();
                 Yii::error("insert db failed");
-                $succ = false;
+                return json_encode(array('succ' => false));
+            } else {
+                if ($isVip == 1) {
+                    $user = User::findOne($payRecord->payer);
+                    $user->left_count = $payRecord->money == 35 ? $user->left_count + 1 : $user->left_count + 10;
+                    if ($user->update() === false) {
+                        $transaction->rollBack();
+                        Yii::error("update db failed");
+                        return json_encode(array('succ' => false));
+                    }
+                }
             }
         } catch (Exception $e) {
+            $transaction->rollBack();
             Yii::error("insert db failed: " . $e->getMessage());
-            $succ = false;
+            return json_encode(array('succ' => false));
         }
+        $transaction->commit();
         return json_encode(array('succ' => $succ));
     }
 

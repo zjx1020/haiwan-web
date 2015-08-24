@@ -191,7 +191,6 @@ function changePayerKind(radio) {
     var select = document.createElement("select");
     select.id = "payer";
     select.className = "form-control";
-    select.setAttribute('onclick', 'changePayerKind(this)');
     initSelect(select, users);
     div.appendChild(select);
   } else {
@@ -201,6 +200,27 @@ function changePayerKind(radio) {
     input.maxLength = 32;
     input.type = "text";
     input.placeholder = "请输入付款方，不能与网站会员重名";
+    div.appendChild(input);
+  }
+
+  var money = document.getElementById("money");
+  div = money.parentNode;
+  div.removeChild(money);
+  if (isVip == 1) {
+    var select = document.createElement("select");
+    select.id = "money";
+    select.className = "form-control";
+    select.options.add(new Option("35", "1"));
+    select.options.add(new Option("300", 10));
+    //select.selectedIndex = 1;
+    div.appendChild(select);
+  } else {
+    var input = document.createElement("input");
+    input.id = "money";
+    input.className = "form-control";
+    input.maxLength = 8;
+    input.type = "text";
+    input.placeholder = "请输入大于0的金额";
     div.appendChild(input);
   }
 }
@@ -248,17 +268,21 @@ $(".consumeRecordModal .confirm").click(function() {
       payer = users[payer - 1];
     }
   }
-  if (money == '') {
-    $("#money").attr('style', 'border-color:red');
-    $("#money").attr('placeholder', '请输入大于0的金额');
-    return;
+  if (isVip == 1) {
+    money = money == 1 ? 35 : 300;
   } else {
-    if (isNaN(money)) {
+    if (money == '') {
       $("#money").attr('style', 'border-color:red');
-      $(".error").html('请输入整数');
+      $("#money").attr('placeholder', '请输入大于0的金额');
       return;
     } else {
-      $("#money").removeAttr('style');
+      if (isNaN(money)) {
+        $("#money").attr('style', 'border-color:red');
+        $(".error").html('请输入整数');
+        return;
+      } else {
+        $("#money").removeAttr('style');
+      }
     }
   }
   if (description == '') {

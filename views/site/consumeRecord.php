@@ -65,6 +65,7 @@ $this->registerJsFile(Url::base() . '/js/consume_record.js', ['depends' => ['yii
         'footer' => '<button class="confirm btn btn-primary">确认</button><button type="button" class="btn btn-default" data-dismiss="modal">取消</button>',
     ]);
     echo '
+    <p style="color:red">对于提前交钱充次数的已注册用户，请选择”网站注册用户“，这样添加完后就会自动加上可使用次数，对于活动当天临时交场地费的不管是不是注册用户都请选择非网站用户，即使是注册用户，交了场地费不是为了充值次数从而通过网站报名的也请选择非网站用户，对于跟活动场地费无关的其它费用也请选择非网站用户，”不能与网站会员重名“是指账号而非网站上显示的名字，所以请随便填写，重复的话会有提示！</p>
     <form class="form-horizontal" method="post">
     <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>">
     <div class="form-group">
@@ -87,7 +88,10 @@ $this->registerJsFile(Url::base() . '/js/consume_record.js', ['depends' => ['yii
     <div class="form-group">
         <label class="col-lg-2 control-label" for="money">金额</label>
         <div class="col-lg-8">
-            <input type="text" placeholder="请输入大于0的金额" id="money" class="form-control" maxlength="8"> 
+            <select id="money" class="form-control">
+                <option value="1">35</option>
+                <option value="10">300</option>
+            </select>
         </div>
     </div>
     <div class="form-group">
