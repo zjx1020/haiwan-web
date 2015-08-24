@@ -1,5 +1,6 @@
 var pageSize = 10;
 var posSize = 5;
+var users = null;
 $.get(BASEURL + 'site/get-consume-record&offset=0&limit=' + pageSize, function(data) {
   update(data);
 }, 'json');
@@ -181,18 +182,166 @@ function clickPage(page) {
   }, 'json');
 }
 
+function changePayerKind(radio) {
+  var isVip = radio.value;
+  var payer = document.getElementById("payer");
+  var div = payer.parentNode;
+  div.removeChild(payer);
+  if (isVip == 1) {
+    var select = document.createElement("select");
+    select.id = "payer";
+    select.className = "form-control";
+    select.setAttribute('onclick', 'changePayerKind(this)');
+    initSelect(select, users);
+    div.appendChild(select);
+  } else {
+    var input = document.createElement("input");
+    input.id = "payer";
+    input.className = "form-control";
+    input.maxLength = 32;
+    input.type = "text";
+    input.placeholder = "请输入付款方，不能与网站会员重名";
+    div.appendChild(input);
+  }
+}
+
 $(".addConsumeRecord").click(function() {
   $(".consumeRecordModal").modal();
+  $(".error").html("");
+  var payer = document.getElementById("payer");
+  if (users == null) {
+    $.get(BASEURL + 'site/get-user-info', function(data) {
+      users = data;
+      initSelect(payer, users);
+    }, 'json');
+  } else {
+    initSelect(payer, users);
+  }
 });
 
+function initSelect(select, values) {
+  select.options.add(new Option("", 0));
+  for (var i = 0; i < values.length; ++i) {
+    select.options.add(new Option(values[i], i + 1));
+  }
+  select.selectedIndex = 0;
+}
+
 $(".consumeRecordModal .confirm").click(function() {
-  $(".consumeRecordModal").modal('hide');
+  var payer = $("#payer").val();
+  var money = $("#money").val();
+  var description = $("#description").val();
+  var isVip = getRadioValue($("#payer-kind input"));
+
+  if (payer == '') {
+    $("#payer").attr('style', 'border-color:red');
+    $("#payer").attr('placeholder', '请输入付款方，不能与网站会员重名');
+    return;
+  } else if (payer == 0) {
+    $(".error").html("请选择付款会员");
+    return;
+  } else {
+    if (isVip != 1) {
+      $("#payer").removeAttr('style');
+    } else {
+      $(".error").html("");
+      payer = users[payer - 1];
+    }
+  }
+  if (money == '') {
+    $("#money").attr('style', 'border-color:red');
+    $("#money").attr('placeholder', '请输入大于0的金额');
+    return;
+  } else {
+    if (isNaN(money)) {
+      $("#money").attr('style', 'border-color:red');
+      $(".error").html('请输入整数');
+      return;
+    } else {
+      $("#money").removeAttr('style');
+    }
+  }
+  if (description == '') {
+    $("#description").attr('style', 'border-color:red');
+    $("#description").attr('placeholder', '请输入本次交易描述');
+    return;
+  } else {
+    $("#description").removeAttr('style');
+  }
+
+  $.post(BASEURL + 'site/add-consume-record&payer=' + payer + '&money=' + money + '&description=' + description + '&isVip=' + isVip, function(data) {
+    if (data.succ == false) {
+      if (data.nameExist) {
+        $("#payer").attr('style', 'border-color:red');
+        $(".error").html('付款方不能与网站会员重名');
+      } else {
+        $(".error").html("操作失败，系统异常，请联系管理员！");
+      }
+    } else {
+      $(".consumeRecordModal").modal('hide');
+      window.location.href = window.location.href; 
+    }
+  }, 'json');
 });
 
 $(".addPayConsumeRecord").click(function() {
   $(".payConsumeRecordModal").modal();
+  $(".pay-error").html("");
 });
 
 $(".payConsumeRecordModal .confirm").click(function() {
-  $(".payConsumeRecordModal").modal('hide');
+  var owner = $("#owner").val();
+  var money = $("#pay-money").val();
+  var description = $("#pay-description").val();
+  if (owner == '') {
+    $("#owner").attr('style', 'border-color:red');
+    $("#owner").attr('placeholder', '请输入收款方，不能与网站会员重名');
+    return;
+  } else {
+    $("#owner").removeAttr('style');
+  }
+  if (money == '') {
+    $("#pay-money").attr('style', 'border-color:red');
+    $("#pay-money").attr('placeholder', '请输入大于0的金额');
+    return;
+  } else {
+    if (isNaN(money)) {
+      $("#pay-money").attr('style', 'border-color:red');
+      $(".pay-error").html('请输入整数');
+    } else {
+      $("#pay-money").removeAttr('style');
+    }
+  }
+  if (description == '') {
+    $("#pay-description").attr('style', 'border-color:red');
+    $("#pay-description").attr('placeholder', '请输入本次交易描述');
+    return;
+  } else {
+    $("#pay-description").removeAttr('style');
+  }
+
+  $.post(BASEURL + 'site/add-pay-consume-record&owner=' + owner + '&money=' + money + '&description=' + description, function(data) {
+    if (data.succ == false) {
+      if (data.nameExist) {
+        $("#owner").attr('style', 'border-color:red');
+        $(".pay-error").html('收款方不能与网站会员重名');
+      } else {
+        $(".pay-error").html("操作失败，系统异常，请联系管理员！");
+      }
+    } else {
+      $(".payConsumeRecordModal").modal('hide');
+      window.location.href = window.location.href; 
+    }
+  }, 'json');
 });
+
+function getRadioValue(radios) {
+  var val = 1;
+  for (var i = 0; i < radios.length; ++i) {
+    if (radios[i].checked == true) {
+      val = radios[i].value;
+      break;
+    }
+  }
+  return val;
+}

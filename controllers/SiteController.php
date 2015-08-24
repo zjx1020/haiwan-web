@@ -20,6 +20,7 @@ use yii\db\Query;
 use yii\db\Connection;
 use app\models\ActivityRecord;
 use app\models\PayRecord;
+use yii\log\Logger;
 
 class SiteController extends Controller
 {
@@ -271,5 +272,72 @@ class SiteController extends Controller
 
     public function actionRookie() {
         return $this->render('rookie');
+    }
+
+    public function actionAddConsumeRecord() {
+        $isVip = $_REQUEST['isVip'];
+        $payRecord = new PayRecord;
+        if ($isVip == 1) {
+            $user = User::find()->select('account')->where("name=\"" . $_REQUEST['payer'] . "\"")->one();
+            $payRecord->payer = $user['account'];
+        } else {
+            $payRecord->payer = $_REQUEST['payer'];
+        }
+        $payRecord->money = (integer) $_REQUEST['money'];
+        $payRecord->description = $_REQUEST['description'];
+        $payRecord->time = date("Y-m-d H:i:s", time());
+        $payRecord->owner = Yii::$app->user->identity->account;
+        if ($isVip != 1) {
+            $user = User::findOne($payRecord->payer);
+            if ($user != null) {
+                return json_encode(array('succ' => false, 'nameExist' => true));
+            }
+        }
+        $succ = true;
+        try {
+            if ($payRecord->insert() === false) {
+                Yii::error("insert db failed");
+                $succ = false;
+            }
+        } catch (Exception $e) {
+            Yii::error("insert db failed: " . $e->getMessage());
+            $succ = false;
+        }
+        return json_encode(array('succ' => $succ));
+    }
+
+    public function actionAddPayConsumeRecord() {
+        $payRecord = new PayRecord;
+        $payRecord->owner = $_REQUEST['owner'];
+        $payRecord->money = (integer) $_REQUEST['money'];
+        $payRecord->description = $_REQUEST['description'];
+        $payRecord->time = date("Y-m-d H:i:s", time());
+        $payRecord->payer = Yii::$app->user->identity->account;
+
+        $user = User::findOne($payRecord->owner);
+        if ($user != null) {
+            return json_encode(array('succ' => false, 'nameExist' => true));
+        }
+
+        $succ = true;
+        try {
+            if ($payRecord->insert() === false) {
+                Yii::error("insert db failed");
+                $succ = false;
+            }
+        } catch (Exception $e) {
+            Yii::error("insert db failed: " . $e->getMessage());
+            $succ = false;
+        }
+        return json_encode(array('succ' => $succ));
+    }
+
+    public function actionGetUserInfo() {
+        $users = User::find()->select('name')->orderBy("convert(name using gbk)")->all();
+        $allUsers = array();
+        foreach ($users as $user) {
+            $allUsers[] = $user->name;
+        }
+        return json_encode($allUsers);
     }
 }

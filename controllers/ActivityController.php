@@ -51,7 +51,7 @@ class ActivityController extends Controller
         $params = $_REQUEST;
         $id = (integer)$params["id"];
         $activity = Activity::find()->select(['address', 'description'])->where("id=$id")->asArray()->One();
-        $users = User::findBySql("select name from user where account in (select account from activity_record where activity_id=$id)")->all();
+        $users = User::findBySql("select name from user join activity_record on user.account=activity_record.account where activity_id=$id order by activity_record.time")->all();
         $names = array();
         foreach ($users as $user) {
             $names[] = $user->name;

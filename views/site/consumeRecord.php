@@ -71,10 +71,10 @@ $this->registerJsFile(Url::base() . '/js/consume_record.js', ['depends' => ['yii
         <label class="col-lg-2 control-label" for="payer-kind"></label>
         <div class="col-lg-8" id="payer-kind">
             <label class="radio-inline">
-              <input type="radio" name="payer-kind" checked="checked" value="1"> 网站注册用户
+              <input type="radio" name="payer-kind" checked="checked" value="1" onclick="changePayerKind(this)"> 网站注册用户
             </label>
             <label class="radio-inline">
-                <input type="radio" name="payer-kind" value="2"> 非网站注册用户
+                <input type="radio" name="payer-kind" value="0" onclick="changePayerKind(this)"> 非网站注册用户
             </label>
         </div>
     </div>
@@ -96,6 +96,9 @@ $this->registerJsFile(Url::base() . '/js/consume_record.js', ['depends' => ['yii
             <input type="text" id="description" class="form-control">
         </div>
     </div>
+    <div style="text-align:center;color:red">
+        <p class="error"></p>
+    </div>
     </form>
     ';
     \yii\bootstrap\Modal::end();
@@ -109,58 +112,25 @@ $this->registerJsFile(Url::base() . '/js/consume_record.js', ['depends' => ['yii
     <form class="form-horizontal" method="post">
     <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>">
     <div class="form-group">
-        <label class="col-lg-2 control-label" for="dance-name">舞名</label>
+        <label class="col-lg-2 control-label" for="owner">收款方</label>
         <div class="col-lg-8">
-            <input type="text" placeholder="请输入舞名" id="dance-name" class="form-control" maxlength="32"> 
+            <input type="text" placeholder="请输入收款方，不能与网站会员重名" id="owner" class="form-control" maxlength="32"> 
         </div>
     </div>
     <div class="form-group">
-        <label class="col-lg-2 control-label" for="dance-country">国家</label>
+        <label class="col-lg-2 control-label" for="pay-money">金额</label>
         <div class="col-lg-8">
-            <select id="dance-country" class="form-control"></select>
+            <input type="text" placeholder="请输入大于0的金额" id="pay-money" class="form-control" maxlength="8"> 
         </div>
     </div>
     <div class="form-group">
-        <label class="col-lg-2 control-label" for="dance-kind">类型</label>
-        <div class="col-lg-8" id="dance-kind">
-            <label class="radio-inline">
-              <input type="radio" name="dance-kind" checked="checked" value="1"> 单人
-            </label>
-            <label class="radio-inline">
-                <input type="radio" name="dance-kind" value="2"> 双人
-            </label>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="col-lg-2 control-label" for="dance-level">难度</label>
-        <div class="col-lg-8" id="dance-level">
-            <label class="radio-inline">
-              <input type="radio" name="dance-level" checked="checked" value="1"> 简单
-            </label>
-            <label class="radio-inline">
-                <input type="radio" name="dance-level" value="2"> 入门
-            </label>
-            <label class="radio-inline">
-              <input type="radio" name="dance-level" value="3"> 熟练
-            </label>
-            <label class="radio-inline">
-                <input type="radio" name="dance-level" value="4"> 进阶
-            </label>
-            <label class="radio-inline">
-                <input type="radio" name="dance-level" value="5"> 高阶
-            </label>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label class="col-lg-2 control-label" for="dance-description">简介</label>
+        <label class="col-lg-2 control-label" for="pay-description">描述</label>
         <div class="col-lg-8">
-            <input type="text" id="dance-description" class="form-control">
+            <input type="text" placeholder="请输入本次交易描述" id="pay-description" class="form-control">
         </div>
     </div>
     <div style="text-align:center;color:red">
-        <p class="error"></p>
+        <p class="pay-error"></p>
     </div>
     </form>
     ';
