@@ -14,14 +14,14 @@ $this->params['breadcrumbs'][] = $subtitle;
 $this->registerJsFile(Url::base() . '/js/dance_ztree.js', ['depends'=>['diselop\ztree\ZTreeAsset']]);
 ?>
 <div class="dance">
-    <div id="leftPage" class="col-lg-3">
+    <div id="leftPage" class="col-lg-3 col-xs-4">
         <ul id="danceTree" class="ztree" style="overflow:auto;height:500px"></ul>
         <div id="addDanceBtns" class="btn-group btn-group-xs">
         <button type="button" class="btn btn-primary addDance">新增一条舞码</button>
         <!--button type="button" class="btn btn-primary addDances">新增多条舞码</button-->
         </div>
     </div>
-    <div class="col-lg-9" id="danceDetail">
+    <div class="col-lg-9 col-xs-8" id="danceDetail">
         <h1 class="danceTitle" style="text-align:center">舞码大全</h1>
         <p class="danceDescription" style="display:none"></p>
         <table class="danceTable" id="danceTable" style="display:none">

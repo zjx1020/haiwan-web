@@ -17,8 +17,8 @@ $this->registerJsFile(Url::base() . '/js/login.js', ['depends' => ['yii\web\Jque
         'id' => 'login-form',
         'options' => ['class' => 'form-horizontal'],
         'fieldConfig' => [
-            'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
-            'labelOptions' => ['class' => 'col-lg-1 control-label'],
+            'template' => "{label}\n<div class=\"col-lg-3 col-xs-6\">{input}</div>\n<div class=\"col-lg-8 col-xs-4\">{error}</div>",
+            'labelOptions' => ['class' => 'col-lg-1 col-xs-2 control-label'],
         ],
     ]); ?>
 
@@ -31,14 +31,14 @@ $this->registerJsFile(Url::base() . '/js/login.js', ['depends' => ['yii\web\Jque
     ])->checkbox() ?-->
 
     <div class="form-group">
-        <div class="col-lg-offset-1 col-lg-11">
+        <div class="col-lg-offset-1 col-lg-11 col-xs-offset-2 col-xs-10">
             <?= Html::submitButton('登录', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
         </div>
-        <div class="col-lg-offset-1">
-            <div class="col-lg-2">
+        <div class="col-lg-offset-1 col-xs-offset-2">
+            <div class="col-lg-2 col-xs-5">
                 <?= Html::a('忘记密码？', null, ['class' => 'forgetPassword']) ?>
             </div>
-            <div class="col-lg-1">
+            <div class="col-lg-1 col-xs-5">
                 <?= Html::a('注册', ['/site/register']) ?>
             </div>
         </div>
