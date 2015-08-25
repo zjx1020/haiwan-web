@@ -16,8 +16,8 @@ $this->params['breadcrumbs'][] = $subtitle;
     <?php $form = ActiveForm::begin([
         'options' => ['class' => 'form-horizontal'],
         'fieldConfig' => [
-            'template' => "{label}\n<div class=\"col-lg-3 col-xs-6\">{input}</div>\n<div class=\"col-lg-8 col-xs-3\">{error}</div>",
-            'labelOptions' => ['class' => 'col-lg-1 col-xs-3 control-label'],
+            'template' => "{label}\n<div class=\"col-lg-3 col-xs-6\">{input}</div>\n<div class=\"col-lg-8 col-xs-4\">{error}</div>",
+            'labelOptions' => ['class' => 'col-lg-1 col-xs-2 control-label'],
         ],
     ]); ?>
 
@@ -42,7 +42,7 @@ $this->params['breadcrumbs'][] = $subtitle;
         ])?>
     
         <div class="form-group">
-            <div class="col-lg-offset-1 col-lg-11 col-xs-offset-3 col-xs-9">
+            <div class="col-lg-offset-1 col-lg-11 col-xs-offset-2 col-xs-10">
                 <?= Html::submitButton('注册', ['class' => 'btn btn-primary']) ?>
             </div>
         </div>

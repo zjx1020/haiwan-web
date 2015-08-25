@@ -15,22 +15,22 @@ $this->registerJsFile(Url::base() . '/js/activity.js', ['depends' => ['yii\web\J
     <h1 style="text-align:center"><?php echo $model['title'] ?></h1>
     <table class="col-lg-12">
         <tr>
-            <td class="col-lg-3"></td>
+            <td class="col-lg-2"></td>
             <th class="col-lg-2">活动地址：</th>
             <td><?php echo $model['address'] ?></td>
         </tr>
         <tr>
-            <td class="col-lg-3"></td>
+            <td class="col-lg-2"></td>
             <th class="col-lg-2">活动简介：</th>
             <td><?php echo $model['description'] ?></td>
         </tr>
         <tr>
-            <td class="col-lg-3"></td>
+            <td class="col-lg-2"></td>
             <th class="col-lg-2">活动开销：</th>
             <td><?php echo $model['cost'] ?></td>
         </tr>
         <tr>
-            <td class="col-lg-3"></td>
+            <td class="col-lg-2"></td>
             <th class="col-lg-2">活动人员：</th>
             <td><?php echo $model['users'] ?></td>
         </tr>

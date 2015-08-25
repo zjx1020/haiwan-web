@@ -10,11 +10,11 @@ $this->params['breadcrumbs'][] = $subtitle;
 $this->registerJsFile(Url::base() . '/js/activity_ztree.js', ['depends'=>['diselop\ztree\ZTreeAsset']]);
 ?>
 <div class="activity">
-    <div class="col-lg-3 col-xs-4">
+    <div class="col-lg-3 col-xs-3">
     <!--?= \diselop\ztree\Ztree::widget($ztree); ?-->
     <ul id="activityTree" class="ztree" style="overflow:auto;height:500px"></ul>
     </div>
-    <div class="col-lg-9 col-xs-8">
+    <div class="col-lg-9 col-xs-9">
         <h1 class="activityTitle" style="text-align:center">海湾活动大全</h1>
         <p class="activityDescription" style="display:none"></p>
         <table class="activityTable" style="display:none">
