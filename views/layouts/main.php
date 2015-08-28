@@ -16,7 +16,7 @@ AppAsset::register($this);
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=0.5">
+    <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="zengjingxiang"/> 
     <meta name="Copyright" content="zengjingxiang"/> 
     <meta name="description" content="海湾之家"/>
@@ -24,7 +24,13 @@ AppAsset::register($this);
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <script type="text/javascript">var BASEURL='<?= yii\helpers\Url::base()?>/index.php?r=';</script>
+    <script type="text/javascript">
+        var BASEURL='<?= yii\helpers\Url::base()?>/index.php?r=';
+        var meta = document.getElementById("viewport");
+        if (screen.width < 768) {
+            meta.content = "width=device-width, initial-scale=0.5";
+        }
+    </script>
 </head>
 <body>
 

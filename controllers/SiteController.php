@@ -20,6 +20,7 @@ use yii\db\Query;
 use yii\db\Connection;
 use app\models\ActivityRecord;
 use app\models\PayRecord;
+use app\models\Dance;
 use yii\log\Logger;
 
 class SiteController extends Controller
@@ -267,7 +268,12 @@ class SiteController extends Controller
     } 
 
     public function actionDances() {
-        return $this->render('dance');
+        $dances = Dance::find()->select(['name', 'kind'])->orderBy("convert(name using gbk)")->all();
+        $danceNames = array();
+        foreach ($dances as $dance) {
+            $danceNames[] = $dance->name . ($dance->kind == 2 ? "*" : "");
+        }
+        return $this->render('dance', ['dances' => $danceNames]);
     }
 
     public function actionRookie() {

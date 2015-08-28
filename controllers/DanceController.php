@@ -23,7 +23,9 @@ class DanceController extends Controller
     {
         $dances = Dance::find()->select(['country', 'name', 'kind'])->orderBy("convert(country using gbk)")->all();
         $dancesArr = array();
+        $danceNames = array();
         foreach ($dances as $dance) {
+            $danceNames[] = $dance->name;
             $country = $dance->country;
             if (!array_key_exists($country, $dancesArr)) {
                 $dancesArr[$country] = array();
@@ -49,7 +51,7 @@ class DanceController extends Controller
             }
         }
 
-        return json_encode(array('ztree' => $nodes, 'hasAuth' => $hasAuth));
+        return json_encode(array('ztree' => $nodes, 'danceNames' => $danceNames, 'hasAuth' => $hasAuth));
     }
 
     public function actionDisplayDance() {
@@ -164,10 +166,13 @@ class DanceController extends Controller
         //读取excel文件中的第一个工作表
         $currentSheet = $PHPExcel->getSheet(0); 
         /**取得最大的列号*/ 
+        /*
         $allColumn = $currentSheet->getHighestColumn(); 
         if ($allColumn != 'E') {
             return;
         }
+        */
+        $allColumn = 'E';
         //取得一共有多少行
         $allRow = $currentSheet->getHighestRow(); 
         /*

@@ -5,6 +5,7 @@ use yii\helpers\Url;
 use yii\grid\GridView;
 use yii\widgets\ActiveForm;
 use app\models\UploadForm;
+use yii\jui\AutoComplete;
 
 /* @var $this yii\web\View */
 
@@ -15,6 +16,20 @@ $this->registerJsFile(Url::base() . '/js/dance_ztree.js', ['depends'=>['diselop\
 ?>
 <div class="dance">
     <div id="leftPage" class="col-lg-3 col-xs-3">
+        <!--input type="text" class="searchDance" placeholder="请输入要查询的舞名" oninput="searchDance(this.value)"-->
+        <?php
+        echo AutoComplete::widget([
+            'id' => "searchDanceName",
+            'name' => 'dance',
+            'clientOptions' => [
+                'source' => $dances,
+            ],
+            'options' => [
+                'class' => 'col-lg-9 col-xs-8',
+            ],
+        ]);
+        ?>
+        <button type="button" class="btn btn-primary searchDance col-xs-4 col-lg-3">搜索</button>
         <ul id="danceTree" class="ztree" style="overflow:auto;height:500px"></ul>
         <div id="addDanceBtns" class="btn-group btn-group-xs">
         <button type="button" class="btn btn-primary addDance">新增一条舞码</button>

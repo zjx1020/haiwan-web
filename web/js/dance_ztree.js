@@ -5,6 +5,7 @@ var modifyDiv = null;
 var hasAuth = false;
 var isAdd = 1;
 var oldName = null;
+var danceNames = null;
 function onClick(event, treeId, treeNode) {
   node = treeNode;
   name = treeNode.name.replace("*", "");
@@ -80,6 +81,7 @@ var zNodes;
 var ztree;
 $.get(BASEURL + 'dance/generate-dance-tree', function(data) {
   zNodes = data.ztree;
+  danceNames = data.danceNames;
   ztree = $.fn.zTree.init($("#danceTree"), setting, zNodes);
   hasAuth = data.hasAuth
   if (hasAuth == false) {
@@ -241,3 +243,15 @@ function clickModifyDance() {
     }, 'json');
   }, 'json');
 }
+
+$(".searchDance").click(function() {
+  var ztree = $.fn.zTree.getZTreeObj("danceTree");
+  var name = $("#searchDanceName").val();
+  var node = ztree.getNodeByParam("name", name);
+  if (node == null) {
+    alert("\"" + name + "\"不存在");
+  } else {
+    ztree.selectNode(node);
+    onClick(null, "danceTree", node);
+  }
+});
