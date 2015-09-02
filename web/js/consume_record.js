@@ -18,6 +18,7 @@ function update(data) {
         consumeTable.rows[i + 1].cells[2].innerHTML = record.money;
         consumeTable.rows[i + 1].cells[3].innerHTML = record.description;
       }
+      clearTable(consumeTable, data.record.length + 1);
       if (recordPage == null && data.recordCnt > pageSize) {
         consumeTable.insertAdjacentElement('afterEnd', generatePage(data.recordCnt, "recordPage"));
       } 
@@ -30,9 +31,20 @@ function update(data) {
         activityTable.rows[i + 1].cells[1].innerHTML = record.title;
         activityTable.rows[i + 1].cells[2].innerHTML = record.count;
       }
+      clearTable(activityTable, data.record.length + 1);
       if (recordPage == null && data.recordCnt > pageSize) {
         activityTable.insertAdjacentElement('afterEnd', generatePage(data.recordCnt, "recordPage"));
       }
+    }
+  }
+}
+
+function clearTable(table, startRow) {
+  var length = table.rows.length;
+  for (var i = startRow; i < length; ++i) {
+    var row = table.rows[i];
+    for (var j = 0; j < row.cells.length; ++j) {
+      row.cells[j].innerHTML = '';
     }
   }
 }

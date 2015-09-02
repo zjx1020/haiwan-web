@@ -46,7 +46,7 @@ function onClick(event, treeId, treeNode) {
     }
   } else {
     if (danceDetail.lastChild == modifyDiv) {
-      danceDetail.removechild(modifyDiv);
+      danceDetail.removeChild(modifyDiv);
     }
     if (treeNode.level == 0) {
       $(".danceTitle").text(treeNode.name).text("舞码大全");

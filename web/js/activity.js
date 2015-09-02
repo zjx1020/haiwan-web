@@ -382,10 +382,12 @@ function publish() {
   }
 
   // 更新活动信息到服务器
+  /*
   if (selectedDancesMap.size != (teachDanceCount + reviewDanceCount + activityDanceCount)) {
     alert("设定的舞码数和实际舞码数不相符，请联系管理员检查！");
     return;
   }
+  */
   if (activityDanceCount < 20) {
     alert("联欢舞码少于20条，请多加点舞码！");
     return;
