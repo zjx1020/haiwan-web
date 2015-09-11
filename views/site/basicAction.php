@@ -9,7 +9,7 @@ $this->registerJsFile(Url::base() . '/js/table.js', ['depends' => ['yii\web\Jque
 $this->registerJsFile(Url::base() . '/js/basic_action.js', ['depends' => ['yii\web\JqueryAsset']]);
 ?>
 <div class="basicAction">
-    <table id="basicActionTable" class="col-lg-12">
+    <table id="basicActionTable" class="col-lg-12 table table-bordered">
         <tr>
             <th class="col-lg-2">基本步</th>
             <th class="col-lg-10">描述</th>
