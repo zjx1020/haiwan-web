@@ -87,19 +87,11 @@ class ActivityController extends Controller
         $result['reviewDances'] = $reviewDances;
 
         $activityDances = array();
-        $danceNames = array();
-        $danceRecords = DanceRecord::findBySql("select dance_name from dance_record where activity_id=$id and kind=0")->all();
-        foreach ($danceRecords as $danceRecord) {
-            $danceNames[$danceRecord->dance_name] = $danceRecord->dance_name;
-        }
-        $dances = Dance::find()->select(["name", "kind"])->where(['in', 'name', $danceNames])->all();
+        $dances = Dance::findBySql("select concat(name,if(kind=2,'*','')) as name,country,description from dance where name in(select dance_name from dance_record where activity_id=$id and kind=0)")->all();
         foreach ($dances as $dance) {
-            $danceNames[$dance->name] = $dance->name . ($dance->kind == 2 ? "*" : "");
+            $activityDances[$dance->name] = $dance->country . "舞。" . "$dance->description";
         }
-        foreach ($danceNames as $danceName) {
-            $activityDances[] = $danceName;
-        }
-        $result['activityDances'] = $activityDances;
+        $result['activityDances'] = count($activityDances) > 0 ? $activityDances : null;
 
         return json_encode($result);
     }
@@ -193,6 +185,40 @@ class ActivityController extends Controller
         }
         $transaction->commit();
         return json_encode(array('succ' => true, 'msg' => '报名成功'));
+    }
+
+    public function actionCancelJoin() {
+        $id = (integer) $_REQUEST['id'];
+        $activityRecord = ActivityRecord::find()->where("account=\"" . Yii::$app->user->identity->account . "\" and activity_id=$id")->one();
+        if (Yii::$app->user->isGuest || $activityRecord == null) {
+            return json_encode(array('succ' => false, 'msg' => '无权限取消报名'));
+        }
+        $activity = Activity::findOne($id);
+        if ($activity->cost > 0) {
+            $user = User::findOne(Yii::$app->user->identity->account);
+            $user->left_count += 1;
+        }
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            if ($activity->cost > 0) {
+                if ($user->update() === false) {
+                    $transaction->rollBack();
+                    Yii::error("update db failed");
+                    return json_encode(array('succ' => false, 'msg' => $this->sysErr));
+                }
+            }
+            if ($activityRecord->delete() === false) {
+                $transaction->rollBack();
+                Yii::error("delete db failed");
+                return json_encode(array('succ' => false, 'msg' => $this->sysErr));
+            }
+        } catch (Exception $e) {
+            $transaction->rollBack();
+            Yii::error("update db exception:" . $e->getMessage());
+            return json_encode(array('succ' => false, 'msg' => $this->sysErr));
+        }
+        $transaction->commit();
+        return json_encode(array('succ' => true, 'msg' => '取消报名成功'));
     }
 
     public function actionCancel() {

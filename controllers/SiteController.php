@@ -21,6 +21,8 @@ use yii\db\Connection;
 use app\models\ActivityRecord;
 use app\models\PayRecord;
 use app\models\Dance;
+use app\models\DanceAction;
+use app\models\DancePose;
 use yii\log\Logger;
 
 class SiteController extends Controller
@@ -219,13 +221,7 @@ class SiteController extends Controller
     {
         $activity = Activity::find()->where("kind=0")->one();
         $model = array();
-        $hasAuth = false;
-        if (!Yii::$app->user->isGuest) {
-            $role = Role::findOne(Yii::$app->user->identity->account);
-            if ($role != null && $role->role == 'admin') {
-                $hasAuth = true;
-            }
-        }
+        $hasAuth = $this->hasAuth();
         if ($activity != null) {
             $model['id'] = $activity->id;
             $model['title'] = substr($activity->time, 5) . " " . $activity->name;
@@ -239,10 +235,14 @@ class SiteController extends Controller
             }
             $model['users'] = implode("，", $userArr);
             $canJoin = true;
-            if (Yii::$app->user->isGuest || ActivityRecord::find()->where("account=\"" . Yii::$app->user->identity->account . "\" and activity_id=$activity->id")->one() != null) {
+            $hasJoined = false;
+            if (Yii::$app->user->isGuest) {
                 $canJoin = false;
+            } elseif (ActivityRecord::find()->where("account=\"" . Yii::$app->user->identity->account . "\" and activity_id=$activity->id")->one() != null) {
+                $canJoin = false;
+                $hasJoined = true;
             }
-            return $this->render('newActivity', ['model' => $model, 'hasAuth' => $hasAuth, 'canJoin' => $canJoin]);
+            return $this->render('newActivity', ['model' => $model, 'hasAuth' => $hasAuth, 'canJoin' => $canJoin, 'hasJoined' => $hasJoined]);
         } else {
             return $this->render('noActivity', ['hasAuth' => $hasAuth]);
         }
@@ -278,6 +278,14 @@ class SiteController extends Controller
 
     public function actionRookie() {
         return $this->render('rookie');
+    }
+
+    public function actionBasicAction() {
+        return $this->render('basicAction', ['hasAuth' => $this->hasAuth()]);
+    }
+
+    public function actionBasicPose() {
+        return $this->render('basicPose', ['hasAuth' => $this->hasAuth()]);
     }
 
     public function actionAddConsumeRecord() {
@@ -359,5 +367,17 @@ class SiteController extends Controller
             $allUsers[] = $user->name;
         }
         return json_encode($allUsers);
+    }
+
+    public function hasAuth() {
+        $hasAuth = false;
+        if (!Yii::$app->user->isGuest) {
+            $role = Role::findOne(Yii::$app->user->identity->account);
+            if ($role != null && $role->role == 'admin') {
+                $hasAuth = true;
+            }
+        }
+
+        return $hasAuth;
     }
 }

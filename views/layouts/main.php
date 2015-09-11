@@ -55,7 +55,12 @@ AppAsset::register($this);
                         ]
                     ],
                     ['label' => '舞码大全', 'url' => ['/site/dances']],
-                    ['label' => '新人专区', 'url' => ['/site/rookie']],
+                    ['label' => '新人专区', 'items' => [
+                            ['label' => '一些话', 'url' => ['/site/rookie']],
+                            ['label' => '基本步', 'url' => ['/site/basic-action']],
+                            ['label' => '基本舞姿', 'url' => ['/site/basic-pose']],
+                        ]
+                    ],
                     Yii::$app->user->isGuest ?
                         ['label' => '登录', 'url' => ['/site/login']] :
                         [

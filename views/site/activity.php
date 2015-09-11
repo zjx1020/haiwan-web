@@ -7,7 +7,10 @@ use yii\helpers\Url;
 $this->title = Yii::$app->params['webTitle'] . '-活动';
 $subtitle = '历史活动';
 $this->params['breadcrumbs'][] = $subtitle;
+$this->registerJsFile(Url::base() . '/js/table.js', ['depends' => ['yii\web\JqueryAsset']]);
 $this->registerJsFile(Url::base() . '/js/activity_ztree.js', ['depends'=>['diselop\ztree\ZTreeAsset']]);
+$this->registerJsFile(Url::base() . '/../vendor/bower/bootstrap/js/tooltip.js', ['depends'=>['yii\web\JqueryAsset']]);
+$this->registerJsFile(Url::base() . '/../vendor/bower/bootstrap/js/popover.js', ['depends'=>['yii\web\JqueryAsset']]);
 ?>
 <div class="activity">
     <div class="col-lg-3 col-xs-3">

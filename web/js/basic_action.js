@@ -1,0 +1,93 @@
+$(function() {
+  init();
+});
+
+function init() {
+  $.get(BASEURL + 'rookie/basic-action', function(data) {
+    var table = document.getElementById("basicActionTable");
+    clearTable(table, 1);
+    for (var i = 0; i < data.length; ++i) {
+      var r = table.insertRow();
+      var name = r.insertCell(0);
+      name.className = "col-lg-2";
+      name.innerHTML = data[i].name;
+      var desc = r.insertCell(1);
+      desc.className = "col-lg-10";
+      desc.innerHTML = data[i].description;
+    }
+  }, 'json');
+}
+
+$(".addAction").click(function() {
+  $(".addActionModal").modal();
+  $("#name").removeAttr('style');
+  $("#name").attr('placeholder', '请输入名字');
+  $("#name").val('');
+  $("#description").val('');
+  $(".error").html("");
+});
+
+$(".addActionModal .confirm").click(function() {
+  var name = $("#name").val();
+  if (name == '') {
+    $("#name").attr('style', 'border-color:red');
+    $("#name").attr('placeholder', '请输入名字');
+    return;
+  } else {
+    $("#name").removeAttr('style');
+  }
+  var description = $("#description").val();
+  
+  $.post(BASEURL + 'rookie/add-action&name=' + name + '&description=' + description, function(data) {
+    if (data.succ == false) {
+      if (data.exist == true) {
+        $("#name").attr('style', 'border-color:red');
+        $("#name").val('');
+        $("#name").attr('placeholder', '该基本步已存在');
+      } else {
+        $(".error").html("操作失败，系统异常，请联系管理员！");
+      }
+    } else {
+      $(".addActionModal").modal('hide');
+      window.location.href = window.location.href; 
+    }
+  }, 'json');
+});
+
+$("#modifyAction").click(function() {
+  var table = document.getElementById("basicActionTable");
+  for (var i = 1; i < table.rows.length; ++i) {
+    var descCell = table.rows[i].cells[1];
+    var desc = descCell.innerHTML;
+    descCell.innerHTML = '';
+    var input = document.createElement("input");
+    input.type = "text";
+    input.innerHTML = desc;
+    descCell.appendChild(input);
+  }
+  if (table.rows.length > 1) {
+    var modifyBtn = document.getElementById("modifyAction");
+    var saveBtn = document.getElementById("save");
+    modifyBtn.disabled = true;
+    saveBtn.disabled = false;
+  }
+});
+
+$("#save").click(function() {
+/*
+    var table = document.getElementById("basicActionTable");
+    for (var i = 1; i < table.rows.length; ++i) {
+      var descCell = table.rows[i].cells[1];
+      var desc = descCell.innerHTML;
+      descCell.innerHTML = '';
+      var input = document.createElement("input");
+      input.type = "text";
+      input.innerHTML = desc;
+      descCell.appendChild(input);
+    }
+    */
+  var modifyBtn = document.getElementById("modifyAction");
+  var saveBtn = document.getElementById("save");
+  modifyBtn.disabled = false;
+  saveBtn.disabled = true;
+});

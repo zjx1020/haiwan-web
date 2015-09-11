@@ -11,6 +11,7 @@ var reviewDanceCount = 10;
 var activityDanceCount = 40;
 var danceSelector = null;
 var oldIndex = 0;
+/*
 $.get(BASEURL + 'activity/check-auth&id=' + id, function(data) {
   $(".cancel").hide();
   $(".finish").hide();
@@ -24,9 +25,21 @@ $.get(BASEURL + 'activity/check-auth&id=' + id, function(data) {
     $(".finish").show();
   }
 }, 'json');
+*/
 
 $(".join").click(function() {
   $.post(BASEURL + 'activity/join&id=' + id, function(data) {
+    if (data.succ == false) {
+      alert(data.msg);
+    } else {
+      alert(data.msg);
+      window.location.href = window.location.href;
+    }
+  }, 'json');
+});
+
+$(".cancelJoin").click(function() {
+  $.post(BASEURL + 'activity/cancel-join&id=' + id, function(data) {
     if (data.succ == false) {
       alert(data.msg);
     } else {

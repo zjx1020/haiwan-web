@@ -14,15 +14,13 @@ function onClick(event, treeId, treeNode) {
           $.each(data.teachDances, function(index, val){
             var r = table.insertRow();
             var cellName = r.insertCell(0);
-            cellName.className = "col-lg-4";
+            cellName.className = "col-lg-3";
             cellName = r.insertCell(1);
             cellName.innerHTML = val.name;
-            cellName.className = "col-lg-2";
-            cellName = r.insertCell(2);
-            cellName.className = "col-lg-1";
-            var cellTeacher = r.insertCell(3);
+            cellName.className = "col-lg-3";
+            var cellTeacher = r.insertCell(2);
             cellTeacher.innerHTML = val.teacher;
-            cellTeacher.className = "col-lg-5";
+            cellTeacher.className = "col-lg-6";
             });
           $("#teachDanceTable").show();
         } else {
@@ -38,11 +36,9 @@ function onClick(event, treeId, treeNode) {
               if (i == 0) {
               r = table.insertRow();
               }
-              var cellName = r.insertCell(i * 2);
-              cellName.className = "col-lg-1";
-              cellName = r.insertCell(i * 2 + 1);
+              var cellName = r.insertCell(i);
               cellName.innerHTML = val;
-              cellName.className = "col-lg-2";
+              cellName.className = "col-lg-3";
               i = (i + 1) % 4;
               });
           $("#reviewDanceTable").show();
@@ -50,19 +46,27 @@ function onClick(event, treeId, treeNode) {
           $("#reviewDanceTable").hide();
         }
 
-        if (data.activityDances != null && data.activityDances.length > 0) {
+        //if (data.activityDances != null || data.activityDances.length > 0) {
+        if (data.activityDances != null) {
           table = document.getElementById("activityDanceTable");
           clearTable(table, 0);
           i = 0;
-          $.each(data.activityDances, function(index, val){
+          // key is danceName & val is dance descriptioin
+          $.each(data.activityDances, function(key, val){
               if (i == 0) {
-              r = table.insertRow();
+                r = table.insertRow();
               }
-              var cellName = r.insertCell(i * 2);
-              cellName.className = "col-lg-1";
-              cellName = r.insertCell(i * 2 + 1);
-              cellName.innerHTML = val;
-              cellName.className = "col-lg-2";
+              var cellName = r.insertCell(i);
+              var a = document.createElement("a");
+              a.href = '#';
+              a.className = "dance";
+              a.setAttribute("rel", "popover");
+              a.setAttribute("data-content", val);
+              //a.setAttribute("data-original-title", key);
+              a.innerHTML = key;
+              $(".dance").popover({trigger: 'hover'});
+              cellName.appendChild(a);
+              cellName.className = "col-lg-3";
               i = (i + 1) % 4;
               });
           $("#activityDanceTable").show();
@@ -89,15 +93,6 @@ function onClick(event, treeId, treeNode) {
       $("#teachDanceTable").hide();
       $("#reviewDanceTable").hide();
       $("#activityDanceTable").hide();
-    }
-  }
-}
-
-function clearTable(table, startRow) {
-  var length = table.rows.length;
-  if (length > startRow) {
-    for (var i = length - 1; i >= startRow; --i) {
-      table.deleteRow(i);
     }
   }
 }
