@@ -61,6 +61,7 @@ AppAsset::register($this);
                             ['label' => '基本舞姿', 'url' => ['/site/basic-pose']],
                             ['label' => '基本队形', 'url' => ['/site/basic-information']],
                             ['label' => '基本术语', 'url' => ['/site/basic-term']],
+                            ['label' => '敬礼动作', 'url' => ['/site/basic-salute']],
                             ['label' => '关于加入海湾的一些话', 'url' => ['/site/rookie']],
                         ]
                     ],

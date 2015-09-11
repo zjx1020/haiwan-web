@@ -300,6 +300,10 @@ class SiteController extends Controller
         return $this->render('basicInformation');
     }
 
+    public function actionBasicSalute() {
+        return $this->render('basicSalute');
+    }
+
     public function actionAddConsumeRecord() {
         $isVip = $_REQUEST['isVip'];
         $payRecord = new PayRecord;
