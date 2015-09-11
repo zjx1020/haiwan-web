@@ -187,7 +187,7 @@ function createActivityDanceTable(danceSelector, maxDanceCnt, cntSelectorName, d
   return table;
 }
 
-// 格式：col-lg-2空白、col-lg-4舞蹈、col-lg-1教舞者标志、col-lg-2两个教舞者填写栏、col-lg-3空白
+// 格式：col-lg-2空白、col-lg-4舞蹈、col-lg-1教舞者标志、col-lg-4两个教舞者填写栏、col-lg-1空白
 function addTeachDance(table, danceSelector, count) {
   var userSelector = document.createElement("select");
   userSelector.className = "userSelector";
@@ -210,10 +210,10 @@ function addTeachDance(table, danceSelector, count) {
     cell.className = "col-lg-1";
     cell.innerHTML = "教舞者：";
     cell = r.insertCell();
-    cell.className = "col-lg-2";
+    cell.className = "col-lg-4";
     cell.innerHTML = userSelector.outerHTML + userSelector.outerHTML;
     cell = r.insertCell();
-    cell.className = "col-lg-3";
+    cell.className = "col-lg-1";
   }
 }
 
