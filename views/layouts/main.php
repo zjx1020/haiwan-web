@@ -56,9 +56,12 @@ AppAsset::register($this);
                     ],
                     ['label' => '舞码大全', 'url' => ['/site/dances']],
                     ['label' => '新人专区', 'items' => [
-                            ['label' => '一些话', 'url' => ['/site/rookie']],
+                            ['label' => '土风舞的意义', 'url' => ['/site/introduction']],
                             ['label' => '基本步', 'url' => ['/site/basic-action']],
                             ['label' => '基本舞姿', 'url' => ['/site/basic-pose']],
+                            ['label' => '基本队形', 'url' => ['/site/basic-information']],
+                            ['label' => '基本术语', 'url' => ['/site/basic-term']],
+                            ['label' => '关于加入海湾的一些话', 'url' => ['/site/rookie']],
                         ]
                     ],
                     Yii::$app->user->isGuest ?

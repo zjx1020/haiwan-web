@@ -18,7 +18,8 @@ $this->registerJsFile(Url::base() . '/js/basic_pose.js', ['depends' => ['yii\web
     <div style="text-align:center" id="basicPoseBtns">
         <?php if ($hasAuth) { ?>
         <button class="btn btn-primary addPose">新增</button>
-        <button id="modifyPose" class="btn btn-primary">修改</button>
+        <button id="modify" class="btn btn-primary">修改</button>
+        <button id="cancel" class="btn btn-primary" disabled=true>取消</button>
         <button id="save" class="btn btn-primary" disabled=true>保存</button>
         <?php } ?>
     </div>

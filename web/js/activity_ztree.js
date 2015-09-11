@@ -16,31 +16,51 @@ function onClick(event, treeId, treeNode) {
             var cellName = r.insertCell(0);
             cellName.className = "col-lg-3";
             cellName = r.insertCell(1);
-            cellName.innerHTML = val.name;
+            //cellName.innerHTML = val.name;
+            var a = document.createElement("a");
+            a.href = '#';
+            a.className = "dance";
+            a.setAttribute("rel", "popover");
+            a.setAttribute("data-content", val.desc);
+            a.innerHTML = val.name;
+            a.style.color = 'red';
+            $(".dance").popover({trigger: 'hover'});
+            cellName.appendChild(a);
             cellName.className = "col-lg-3";
             var cellTeacher = r.insertCell(2);
             cellTeacher.innerHTML = val.teacher;
             cellTeacher.className = "col-lg-6";
             });
           $("#teachDanceTable").show();
+          $(".dance").popover({trigger: 'hover'});
         } else {
           $("#teachDanceTable").hide();
         }
 
-        if (data.reviewDances != null && data.reviewDances.length > 0) {
+        //if (data.reviewDances != null && data.reviewDances.length > 0) {
+        if (data.reviewDances != null) {
           table = document.getElementById("reviewDanceTable");
           clearTable(table, 0);
           var i = 0;
           var r;
-          $.each(data.reviewDances, function(index, val){
-              if (i == 0) {
+          $.each(data.reviewDances, function(key, val){
+            if (i == 0) {
               r = table.insertRow();
-              }
-              var cellName = r.insertCell(i);
-              cellName.innerHTML = val;
-              cellName.className = "col-lg-3";
-              i = (i + 1) % 4;
-              });
+            }
+            var cellName = r.insertCell(i);
+            var a = document.createElement("a");
+            a.href = '#';
+            a.className = "dance";
+            a.setAttribute("rel", "popover");
+            a.setAttribute("data-content", val);
+            a.innerHTML = key;
+            a.style.color = 'green';
+            $(".dance").popover({trigger: 'hover'});
+            cellName.appendChild(a);
+            cellName.className = "col-lg-3";
+            i = (i + 1) % 4;
+          });
+          $(".dance").popover({trigger: 'hover'});
           $("#reviewDanceTable").show();
         } else {
           $("#reviewDanceTable").hide();
@@ -53,22 +73,23 @@ function onClick(event, treeId, treeNode) {
           i = 0;
           // key is danceName & val is dance descriptioin
           $.each(data.activityDances, function(key, val){
-              if (i == 0) {
-                r = table.insertRow();
-              }
-              var cellName = r.insertCell(i);
-              var a = document.createElement("a");
-              a.href = '#';
-              a.className = "dance";
-              a.setAttribute("rel", "popover");
-              a.setAttribute("data-content", val);
-              //a.setAttribute("data-original-title", key);
-              a.innerHTML = key;
-              $(".dance").popover({trigger: 'hover'});
-              cellName.appendChild(a);
-              cellName.className = "col-lg-3";
-              i = (i + 1) % 4;
-              });
+            if (i == 0) {
+              r = table.insertRow();
+            }
+            var cellName = r.insertCell(i);
+            var a = document.createElement("a");
+            a.href = '#';
+            a.className = "dance";
+            a.setAttribute("rel", "popover");
+            a.setAttribute("data-content", val);
+            //a.setAttribute("data-original-title", key);
+            a.innerHTML = key;
+            $(".dance").popover({trigger: 'hover'});
+            cellName.appendChild(a);
+            cellName.className = "col-lg-3";
+            i = (i + 1) % 4;
+          });
+          $(".dance").popover({trigger: 'hover'});
           $("#activityDanceTable").show();
         } else {
           $("#activityDanceTable").hide();

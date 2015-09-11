@@ -1,3 +1,5 @@
+var changeContent = new Map();
+
 $(function() {
   init();
 });
@@ -62,32 +64,46 @@ $("#modifyAction").click(function() {
     descCell.innerHTML = '';
     var input = document.createElement("input");
     input.type = "text";
-    input.innerHTML = desc;
+    input.value = desc;
+    input.setAttribute('name', table.rows[i].cells[0].innerHTML);
+    input.setAttribute('onchange', 'changeDesc(this)');
+    input.className = "col-lg-10";
     descCell.appendChild(input);
   }
   if (table.rows.length > 1) {
     var modifyBtn = document.getElementById("modifyAction");
     var saveBtn = document.getElementById("save");
+    var cancelBtn = document.getElementById("cancel");
     modifyBtn.disabled = true;
     saveBtn.disabled = false;
+    cancelBtn.disabled = false;
   }
 });
 
+function changeDesc(input) {
+  changeContent.set(input.getAttribute('name'), input.value);
+}
+
 $("#save").click(function() {
-/*
-    var table = document.getElementById("basicActionTable");
-    for (var i = 1; i < table.rows.length; ++i) {
-      var descCell = table.rows[i].cells[1];
-      var desc = descCell.innerHTML;
-      descCell.innerHTML = '';
-      var input = document.createElement("input");
-      input.type = "text";
-      input.innerHTML = desc;
-      descCell.appendChild(input);
+  var names = '';
+  var values = '';
+  for (var key of changeContent.keys()) {
+    names += key + ',';
+    values += changeContent.get(key) + "delim";
+  }
+  names.substr(0, names.length - 1);
+  values.substr(0, values.length - 5);
+  $.post(BASEURL + 'rookie/update-action&names=' + names + '&values=' + values, function(data) {
+    if (data.succ == false) {
+      alert(data.msg);
+    } else {
+      changeContent.clear();
+      window.location.href = window.location.href;
     }
-    */
-  var modifyBtn = document.getElementById("modifyAction");
-  var saveBtn = document.getElementById("save");
-  modifyBtn.disabled = false;
-  saveBtn.disabled = true;
+  }, 'json');
+});
+
+$("#cancel").click(function() {
+  changeContent.clear();
+  window.location.href = window.location.href;
 });

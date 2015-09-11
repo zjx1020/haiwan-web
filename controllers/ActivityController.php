@@ -63,28 +63,22 @@ class ActivityController extends Controller
         $dances = DanceRecord::find()->select(['dance_name', 'teacher'])->where("activity_id=$id and kind=2")->all();
         $teachDances = array();
         foreach ($dances as $dance) {
-            $kind = Dance::find()->select(['kind'])->where("name=\"" . $dance->dance_name . "\"")->One()['kind'];
+            $info = Dance::find()->select(['kind', 'country', 'description'])->where("name=\"" . $dance->dance_name . "\"")->One();
+            $kind = $info['kind'];
             $teachDance = array();
             $teachDance['name'] = $dance->dance_name . ($kind == 2 ? "*" : "");
             $teachDance['teacher'] = "教舞者：" . $dance->teacher;
+            $teachDance['desc'] = $info['country'] . "舞。" . $info['description'];
             $teachDances[] = $teachDance;
         }
         $result['teachDances'] = $teachDances;
 
         $reviewDances = array();
-        $danceNames = array();
-        $danceRecords = DanceRecord::findBySql("select dance_name from dance_record where activity_id=$id and kind=1")->all();
-        foreach ($danceRecords as $danceRecord) {
-            $danceNames[$danceRecord->dance_name] = $danceRecord->dance_name;
-        }
-        $dances = Dance::find()->select(["name", "kind"])->where(['in', 'name', $danceNames])->all();
+        $dances = Dance::findBySql("select concat(name,if(kind=2,'*','')) as name,country,description from dance where name in(select dance_name from dance_record where activity_id=$id and kind=1)")->all();
         foreach ($dances as $dance) {
-            $danceNames[$dance->name] = $dance->name . ($dance->kind == 2 ? "*" : "");
+            $reviewDances[$dance->name] = $dance->country . "舞。" . "$dance->description";
         }
-        foreach ($danceNames as $danceName) {
-            $reviewDances[] = $danceName;
-        }
-        $result['reviewDances'] = $reviewDances;
+        $result['reviewDances'] = count($reviewDances) > 0 ? $reviewDances : null;
 
         $activityDances = array();
         $dances = Dance::findBySql("select concat(name,if(kind=2,'*','')) as name,country,description from dance where name in(select dance_name from dance_record where activity_id=$id and kind=0)")->all();

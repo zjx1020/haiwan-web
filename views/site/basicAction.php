@@ -19,6 +19,7 @@ $this->registerJsFile(Url::base() . '/js/basic_action.js', ['depends' => ['yii\w
         <?php if ($hasAuth) { ?>
         <button class="btn btn-primary addAction">新增</button>
         <button id="modifyAction" class="btn btn-primary">修改</button>
+        <button id="cancel" class="btn btn-primary" disabled=true>取消</button>
         <button id="save" class="btn btn-primary" disabled=true>保存</button>
         <?php } ?>
     </div>
