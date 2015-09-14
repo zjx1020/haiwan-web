@@ -396,4 +396,19 @@ class SiteController extends Controller
 
         return $hasAuth;
     }
+
+    public function actionReduceCount() {
+        $user = User::find()->where("name=\"" . $_REQUEST['payer'] . "\"")->one();
+        try {
+            $user->left_count -= $_REQUEST['count'];
+            if ($user->update() === false) {
+                Yii::error("update db failed");
+                return json_encode(array('succ' => false));
+            }
+        } catch (Exception $e) {
+            Yii::error("insert db failed: " . $e->getMessage());
+            return json_encode(array('succ' => false));
+        }
+        return json_encode(array('succ' => true));
+    }
 }

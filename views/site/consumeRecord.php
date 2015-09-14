@@ -35,6 +35,7 @@ $this->registerJsFile(Url::base() . '/js/consume_record.js', ['depends' => ['yii
     <div style="text-align:center">
         <button class="btn btn-primary addConsumeRecord">新增收款记录</button>
         <button class="btn btn-primary addPayConsumeRecord">新增付款记录</button>
+        <button class="btn btn-primary reduceCount">舞友活动补扣次数</button>
     </div>
     <?php } else {?>
 
@@ -134,6 +135,39 @@ $this->registerJsFile(Url::base() . '/js/consume_record.js', ['depends' => ['yii
     </div>
     <div style="text-align:center;color:red">
         <p class="pay-error"></p>
+    </div>
+    </form>
+    ';
+    \yii\bootstrap\Modal::end();
+
+    \yii\bootstrap\Modal::begin([
+        'header' => '<h2>舞友活动补扣次数</h2>',
+        'options' => ["class" => "reduceCountModal"],
+        'footer' => '<button class="confirm btn btn-primary">确认</button><button type="button" class="btn btn-default" data-dismiss="modal">取消</button>',
+    ]);
+    echo '
+    <form class="form-horizontal" method="post">
+    <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>">
+    <div class="form-group">
+        <label class="col-lg-2 control-label" for="reduce-dancer">舞友</label>
+        <div class="col-lg-8">
+            <select id="reduce-dancer" class="form-control"></select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-lg-2 control-label" for="reduce-count">次数</label>
+        <div class="col-lg-8">
+            <select id="reduce-count" class="form-control">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+    </div>
+    <div style="text-align:center;color:red">
+        <p class="reduce-error"></p>
     </div>
     </form>
     ';

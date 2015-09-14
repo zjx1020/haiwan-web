@@ -74,14 +74,14 @@ class ActivityController extends Controller
         $result['teachDances'] = $teachDances;
 
         $reviewDances = array();
-        $dances = Dance::findBySql("select concat(name,if(kind=2,'*','')) as name,country,description from dance where name in(select dance_name from dance_record where activity_id=$id and kind=1)")->all();
+        $dances = Dance::findBySql("select concat(name,if(dance.kind=2,'*','')) as name,country,description from dance join dance_record on dance.name=dance_record.dance_name where dance_record.activity_id=$id and dance_record.kind=1")->all();
         foreach ($dances as $dance) {
             $reviewDances[$dance->name] = $dance->country . "舞。" . "$dance->description";
         }
         $result['reviewDances'] = count($reviewDances) > 0 ? $reviewDances : null;
 
         $activityDances = array();
-        $dances = Dance::findBySql("select concat(name,if(kind=2,'*','')) as name,country,description from dance where name in(select dance_name from dance_record where activity_id=$id and kind=0)")->all();
+        $dances = Dance::findBySql("select concat(name,if(dance.kind=2,'*','')) as name,country,description from dance join dance_record on dance.name=dance_record.dance_name where dance_record.activity_id=$id and dance_record.kind=0")->all();
         foreach ($dances as $dance) {
             $activityDances[$dance->name] = $dance->country . "舞。" . "$dance->description";
         }
@@ -258,8 +258,8 @@ class ActivityController extends Controller
             return json_encode(array('succ' => false, 'msg' => '无权限操作'));
         }
         $userCount = ActivityRecord::find()->where("activity_id=$id")->count();
-        if ($userCount < 8) {
-            return json_encode(array('succ' => false, 'msg' => "活动人数少于8人，无法创建活动"));
+        if ($userCount < 6) {
+            return json_encode(array('succ' => false, 'msg' => "活动人数少于6人，无法创建活动"));
         }
         $activity = Activity::findOne($id);
         $activity->kind = 1;

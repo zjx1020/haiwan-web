@@ -10,10 +10,10 @@ $this->registerJsFile(Url::base() . '/js/basic_pose.js', ['depends' => ['yii\web
 ?>
 <div class="basicPose">
     <table id="basicPoseTable" class="col-lg-12 table table-bordered">
-        <tr>
+        <!--tr>
             <th class="col-lg-2">基本舞姿</th>
             <th class="col-lg-10">描述</th>
-        </tr>
+        </tr-->
     </table>
     <div style="text-align:center" id="basicPoseBtns">
         <?php if ($hasAuth) { ?>

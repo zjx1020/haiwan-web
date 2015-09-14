@@ -381,3 +381,40 @@ function getRadioValue(radios) {
   }
   return val;
 }
+
+$(".reduceCount").click(function() {
+  $(".reduceCountModal").modal();
+  $(".error").html("");
+  var payer = document.getElementById("reduce-dancer");
+  if (users == null) {
+    $.get(BASEURL + 'site/get-user-info', function(data) {
+      users = data;
+      initSelect(payer, users);
+    }, 'json');
+  } else {
+    initSelect(payer, users);
+  }
+});
+
+$(".reduceCountModal .confirm").click(function() {
+  var payer = $("#reduce-dancer").val();
+  var count = $("#reduce-count").val();
+  var description = $("#reduce-description").val();
+
+  if (payer == 0) {
+    $(".error").html("请选择待扣次数的舞友");
+    return;
+  } else {
+    $(".error").html("");
+    payer = users[payer - 1];
+  }
+  
+  $.post(BASEURL + 'site/reduce-count&payer=' + payer + '&count=' + count, function(data) {
+    if (data.succ == false) {
+      $(".error").html("操作失败，系统异常，请联系管理员！");
+    } else {
+      $(".reduceCountModal").modal('hide');
+      window.location.href = window.location.href; 
+    }
+  }, 'json');
+});

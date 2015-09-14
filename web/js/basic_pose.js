@@ -7,15 +7,36 @@ $(function() {
 function init() {
   $.get(BASEURL + 'rookie/basic-pose', function(data) {
     var table = document.getElementById("basicPoseTable");
-    clearTable(table, 1);
-    for (var i = 1; i < data.length; ++i) {
-      var r = table.insertRow();
-      var name = r.insertCell(0);
-      name.className = "col-lg-2";
+    clearTable(table, 0);
+    var r;
+    for (var i = 0; i < data.length; ++i) {
+      if (i % 3 == 0) {
+        r = table.insertRow();
+      } 
+
+      var caption = document.createElement("div");
+      caption.className = "caption";
+      var name = document.createElement("h3"); // 舞姿图片标题
       name.innerHTML = data[i].name;
-      var desc = r.insertCell(1);
-      desc.className = "col-lg-10";
+      var desc = document.createElement("p"); // 舞姿图片描述
+      desc.className = data[i].name;
       desc.innerHTML = data[i].description;
+      caption.appendChild(name);
+      caption.appendChild(desc);
+
+      var img = document.createElement("img");
+      img.src = "images/" + data[i].name + ".jpg";
+      img.alt = data[i].name + " 示例图";
+
+      var div = document.createElement("div");
+      div.className = "thumbnail";
+      div.appendChild(img);
+      div.appendChild(caption);
+
+      var cell = r.insertCell(0);
+      cell.setAttribute("pose_name", data[i].name);
+      cell.className = "col-lg-4"; 
+      cell.appendChild(div);
     }
   }, 'json');
 }
@@ -58,17 +79,23 @@ $(".addPoseModal .confirm").click(function() {
 
 $("#modify").click(function() {
   var table = document.getElementById("basicPoseTable");
-  for (var i = 1; i < table.rows.length; ++i) {
-    var descCell = table.rows[i].cells[1];
-    var desc = descCell.innerHTML;
-    descCell.innerHTML = '';
-    var input = document.createElement("input");
-    input.type = "text";
-    input.value = desc;
-    input.setAttribute('name', table.rows[i].cells[0].innerHTML);
-    input.setAttribute('onchange', 'changeDesc(this)');
-    input.className = "col-lg-10";
-    descCell.appendChild(input);
+  for (var i = 0; i < table.rows.length; ++i) {
+    var row = table.rows[i];
+    for (var j = 0; j < row.cells.length; ++j) {
+      var descCell = table.rows[i].cells[j];
+      var name = descCell.getAttribute("pose_name");
+      var p = document.getElementsByClassName(name)[0];
+      var parent = p.parentNode;
+
+      var input = document.createElement("input");
+      input.type = "text";
+      input.value = p.innerHTML;
+      input.setAttribute('name', name);
+      input.setAttribute('onchange', 'changeDesc(this)');
+      input.className = "col-lg-12";
+      parent.removeChild(p);
+      parent.appendChild(input);
+    }
   }
   if (table.rows.length > 1) {
     var modifyBtn = document.getElementById("modify");
