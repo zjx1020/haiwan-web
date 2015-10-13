@@ -14,6 +14,7 @@ $(".forgetPasswordModal .confirm").click(function() {
     return;
   } else {
     $("#email").removeAttr('style');
+    $(".error").html("");
   }
   $.post(BASEURL + 'site/forget-password&email=' + email, function(data) {
     if (data.succ == false) {

@@ -150,6 +150,8 @@ class smtp
     function smtp_sockopen_relay() 
     { 
         $this->log_write("Trying to ".$this->relay_host.":".$this->smtp_port."\n"); 
+        $errstr = '';
+        $errno = '';
         $this->sock = @fsockopen($this->relay_host, $this->smtp_port, $errno, $errstr, $this->time_out); 
         if (!($this->sock && $this->smtp_ok()))  
         { 
@@ -172,6 +174,8 @@ class smtp
         foreach ($MXHOSTS as $host)  
         { 
             $this->log_write("Trying to ".$host.":".$this->smtp_port."\n"); 
+            $errstr = '';
+            $errno = '';
             $this->sock = @fsockopen($host, $this->smtp_port, $errno, $errstr, $this->time_out); 
             if (!($this->sock && $this->smtp_ok()))  
             { 
