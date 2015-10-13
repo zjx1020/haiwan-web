@@ -24,6 +24,7 @@ use app\models\Dance;
 use app\models\DanceAction;
 use app\models\DancePose;
 use yii\log\Logger;
+require_once (dirname(__FILE__) . '/../vendor/smtp.php'); 
 
 class SiteController extends Controller
 {
@@ -410,5 +411,31 @@ class SiteController extends Controller
             return json_encode(array('succ' => false));
         }
         return json_encode(array('succ' => true));
+    }
+
+    public function actionForgetPassword() {
+        $email = $_REQUEST['email'];
+        $user = User::find()->where("email=\"" . $email . "\"")->one();
+        if ($user == null) {
+            return json_encode(array('succ' => false, 'exist' => false));
+        }
+
+        $server = "smtp.sina.com";
+        $port = 25;
+        $name = "海湾之家";
+        $from = "lqxz1020@sina.com";
+        $to = $email;
+        $smtpUser = "lqxz1020";
+        $smtpPassword = "5841314240";
+        $subject = "海湾之家账号密码";
+        $body = "账号：" . $user->account . "；密码：" . $user->password;
+        $type = "TXT";
+        $smtp = new \smtp($server, $port, true, $smtpUser, $smtpPassword);
+        //$smtp->debug = true;
+        if($smtp->sendmail($to, $name, $from, $subject, $body, $type)) {
+            return json_encode(array('succ' => true));
+        } else {
+            return json_encode(array('succ' => false));
+        }
     }
 }
