@@ -22,17 +22,14 @@ $this->registerJsFile(Url::base() . '/../vendor/bower/bootstrap/js/popover.js', 
         <p class="activityDescription" style="display:none"></p>
         <table class="activityTable" style="display:none">
             <tr>
-                <td class="col-lg-1"></td>
                 <th class="col-lg-2">活动地址：</th>
                 <td class="address"></td>
             </tr>
             <tr>
-                <td class="col-lg-1"></td>
                 <th class="col-lg-2">活动简介：</th>
                 <td class="description"></td>
             </tr>
             <tr>
-                <td class="col-lg-1"></td>
                 <th class="col-lg-2">活动人员：</th>
                 <td class="users"></td>
             </tr>
