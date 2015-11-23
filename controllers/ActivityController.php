@@ -221,17 +221,19 @@ class ActivityController extends Controller
             return json_encode(array('succ' => false, 'msg' => '无权限取消'));
         }
         $activity = Activity::findOne($id);
-        if ($activity->cost > 0) {
-            $user = User::findOne(Yii::$app->user->identity->account);
-            $user->left_count += 1;
-        }
+        
         $transaction = Yii::$app->db->beginTransaction();
         try {
             if ($activity->cost > 0) {
-                if ($user->update() === false) {
-                    $transaction->rollBack();
-                    Yii::error("update db failed");
-                    return json_encode(array('succ' => false, 'msg' => $this->sysErr));
+                $records = ActivityRecord::find()->select('account')->where("activity_id=$id")->all();
+                foreach ($records as $record) {
+                    $user = User::findOne($record->account);
+                    $user->left_count += 1;
+                    if ($user->update() === false) {
+                        $transaction->rollBack();
+                        Yii::error("update db failed");
+                        return json_encode(array('succ' => false, 'msg' => $this->sysErr));
+                    }
                 }
             }
             ActivityRecord::deleteAll("activity_id=$id");
