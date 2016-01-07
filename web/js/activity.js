@@ -120,7 +120,6 @@ function displayDance(reviewDances, activityDances) {
     //danceSelector.addEventListener('onchange', changeUser(this.selectedIndex));
     danceSelector.setAttribute('onchange', 'changeDance(this)');
     danceSelector.setAttribute('onclick', 'clickDanceSelector(this.selectedIndex)');
-    danceSelector.setAttribute('onkeypress', 'searchDance()');
     danceSelector.options.add(new Option("", 0));
     for (var i = 0; i < dances.length; ++i) {
       danceSelector.options.add(new Option(dances[i], i + 1));
@@ -454,18 +453,4 @@ function publish() {
       window.location.href = window.location.href;
     }
   }, 'json');
-}
-
-function searchDance() {
-  var x;
-  if(window.event) // IE8 以及更早版本
-  {
-    x=event.keyCode;
-  }
-  else if(event.which) // IE9/Firefox/Chrome/Opera/Safari
-  {
-    x=event.which;
-  }
-  keychar=String.fromCharCode(x);
-  alert("按键 " + keychar + " 被按下");
 }

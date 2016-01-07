@@ -259,10 +259,12 @@ class ActivityController extends Controller
         if ($this->hasAuth() === false) {
             return json_encode(array('succ' => false, 'msg' => '无权限操作'));
         }
+        /*
         $userCount = ActivityRecord::find()->where("activity_id=$id")->count();
         if ($userCount < 6) {
             return json_encode(array('succ' => false, 'msg' => "活动人数少于6人，无法创建活动"));
         }
+        */
         $activity = Activity::findOne($id);
         $activity->kind = 1;
 
